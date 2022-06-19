@@ -72,7 +72,6 @@ async function getHtml(url) {
 
 async function parsing(url) {
   const html = await getHtml(url);
-  console.log(html.data);
   const $ = cheerio.load(html.data);
 
   // id가 겹치지 않는 경우 가능함 (id => #, class => .)
@@ -82,31 +81,30 @@ async function parsing(url) {
   console.log(`src is ${src}`);
   let real = "http://blog.naver.com/" + src;
   console.log(`real is ${real}`);
+  parsingBlog(real);
   // TODO. 여기에서 다시 html 파싱 필요 
 }
 
-// const getHtml = async(url) => {
-//     try {
-//         return await axios.get(url);
-//     } catch(err) {
-//         log(err);
-//     }
-// }
+async function parsingBlog(url) {
+  const html = await getHtml(url);
+  // console.log(`html is ${html.data}`);
+  const $ = cheerio.load(html.data);
 
-// const parsing = async(url) => {
-//     const html = await getHtml(url);
-//     // log(html);
-//     const $ = cheerio.load(html.data);
-//     console.log($)
-//     var src = $('#iframe#mainFrame').attr("src");
-    
-//     var real = "https://blog.naver.com" + src;
-//     log("real : " + real);
-//     const realHtml = getHtml(real);
-//     log(realHtml);
-    
-// }
+  // console.log($("meta[property='og:title']").attr("content"));
+  // let title = $("div.se-component-content > span.se-fs- se-ff-").text();
 
-// parsing("https://blog.naver.com/whitedevel/222723174172");
-// // log(src.load);
+  // const $container = $("div.se-main-container");
+  // if ($container !== null) {
+  //   console.log(`${$container}`);
+  // }
+  
+  // const $module = $("div.se-component.se-text.se-l-default div.se-component-content div.se-section div.se-module span.se-fs- b").text();
+  // if ($module !== null) {
+  //   console.log(`${$module}`);
+  // }
+  
+  console.log(`title is : ${$("title").text()}`);
+  console.log(`weather is ${$("div.se-component.se-text.se-l-default div.se-component-content div.se-section div.se-module span.se-fs- b").text()}`);
+  // console.log(`weather is ${$("p.se-text-paragraph se-text-paragraph-align-right  > span.se-fs- se-ff-   > b").text()}`)
+}
 
