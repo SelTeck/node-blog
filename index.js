@@ -81,8 +81,9 @@ async function parsing(url) {
   console.log(`src is ${src}`);
   let real = "http://blog.naver.com/" + src;
   console.log(`real is ${real}`);
-  parsingBlog(real);
+  
   // TODO. 여기에서 다시 html 파싱 필요 
+  parsingBlog(real);
 }
 
 async function parsingBlog(url) {
@@ -93,18 +94,21 @@ async function parsingBlog(url) {
   // console.log($("meta[property='og:title']").attr("content"));
   // let title = $("div.se-component-content > span.se-fs- se-ff-").text();
 
-  // const $container = $("div.se-main-container");
-  // if ($container !== null) {
-  //   console.log(`${$container}`);
-  // }
+  let div_list = $("div.se-module.se-module-text");
+  if (div_list.length) {
+    console.log(`div_list.length is ${div_list.length}`);
+    // div_list.each((_, e) => {
+    //   console.log($(e).find(`span`).text());
+    // });
+  } else {
+    console.log(`div_list.lenth is zero!!!`);
+  }
   
-  // const $module = $("div.se-component.se-text.se-l-default div.se-component-content div.se-section div.se-module span.se-fs- b").text();
-  // if ($module !== null) {
-  //   console.log(`${$module}`);
-  // }
-  
-  console.log(`title is : ${$("title").text()}`);
-  console.log(`weather is ${$("div.se-component.se-text.se-l-default div.se-component-content div.se-section div.se-module span.se-fs- b").text()}`);
-  // console.log(`weather is ${$("p.se-text-paragraph se-text-paragraph-align-right  > span.se-fs- se-ff-   > b").text()}`)
+  console.log($(div_list[0]).find(`span`).text());
+  console.log($(div_list[1]).find(`span`).text());
+  console.log($(div_list[2]).find(`span`).text());
+  console.log($(div_list[3]).find(`span`).text());
+  console.log($(div_list[4]).find(`span`).text());
+  console.log($(div_list[5]).find(`span`).text());
 }
 
