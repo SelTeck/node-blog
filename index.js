@@ -9,54 +9,38 @@ const url = "https://rss.blog.naver.com/whitedevel.xml";
 
 
 const word = "CRPS 환우의 기록";
-let crpsArray = [];
 
-request(url, function(err, res, data) {
-    if(!err && res.statusCode == 200) {
-        parseXML(data);
-    } else {
-        console.log('error -> ${err}');
-    }
+request(url, function (err, res, data) {
+  if (!err && res.statusCode == 200) {
+    parseXML(data);
+  } else {
+    console.log('error -> ${err}');
+  }
 });
 
 function parseXML(xml) {
-  xml2Json.parseString(xml, function(err, obj) {
-    if(err) {
+  xml2Json.parseString(xml, function (err, obj) {
+    if (err) {
       console.log(err);
       return;
     }
 
     var items = obj.rss.channel[0].item;
-    for(var item in items) {
-        var title = items[item].title[0];
-        var words = title.split(" - ");
-        if (words[0] == word) {
-            parsing(items[item].link[0]);
-            break;
-        
-          // let guid = items[item].guid[0];
-          // let index = guid.lastIndexOf("/")
-          // guid = guid.substr(index + 1, guid.lenth);
-          // console.log(`guid is ${guid}`);
-        //     crpsArray.push ({
-        //         title: title,
-        //         data: words[1],
-        //         url: items[item].link[0],
-        //         content: items[item].description[0],
-        //     });
+    for (var item in items) {
+      var title = items[item].title[0];
+      var words = title.split(" - ");
+      if (words[0] == word) {
+        parsing(items[item].link[0]);
+      }
 
-        }
-        
-        // log(crpsArray);
+      // var category = items[item].category[0];
 
-        // var category = items[item].category[0];
-        
-        // var url = items[item].link[0];
-        // var guid = items[item].guid[0];
+      // var url = items[item].link[0];
+      // var guid = items[item].guid[0];
 
-        // console.log("카테고리 : " + category);
-        // console.log("제목 : " + title);
-        // console.log("url: " + url);
+      // console.log("카테고리 : " + category);
+      // console.log("제목 : " + title);
+      // console.log("url: " + url);
     }
   });
 }
@@ -65,8 +49,8 @@ function parseXML(xml) {
 async function getHtml(url) {
   try {
     return await axios.get(url);
-  } catch(err) {
-      log(err);
+  } catch (err) {
+    log(err);
   }
 }
 
@@ -77,11 +61,11 @@ async function parsing(url) {
   // id가 겹치지 않는 경우 가능함 (id => #, class => .)
   // let src = $('#mainFrame').attr("src"); 
   // 정확하게 하기 위해 root를 타는 것이 좋다.
-  let src = $("body > iframe#mainFrame").attr("src"); 
-  console.log(`src is ${src}`);
+  let src = $("body > iframe#mainFrame").attr("src");
+  // console.log(`src is ${src}`);
   let real = "http://blog.naver.com/" + src;
-  console.log(`real is ${real}`);
-  
+  // console.log(`real is ${real}`);
+
   // TODO. 여기에서 다시 html 파싱 필요 
   parsingBlog(real);
 }
@@ -96,19 +80,19 @@ async function parsingBlog(url) {
 
   let div_list = $("div.se-module.se-module-text");
   if (div_list.length) {
-    console.log(`div_list.length is ${div_list.length}`);
+    // console.log(`div_list.length is ${div_list.length}`);
     // div_list.each((_, e) => {
     //   console.log($(e).find(`span`).text());
     // });
+    console.log($(div_list[0]).find(`span`).text());
+    console.log($(div_list[1]).find(`span`).text());
+    console.log($(div_list[2]).find(`span`).text());
+    console.log($(div_list[3]).find(`span`).text());
+    console.log($(div_list[4]).find(`span`).text());
+    console.log($(div_list[5]).find(`span`).text());
   } else {
     console.log(`div_list.lenth is zero!!!`);
   }
-  
-  console.log($(div_list[0]).find(`span`).text());
-  console.log($(div_list[1]).find(`span`).text());
-  console.log($(div_list[2]).find(`span`).text());
-  console.log($(div_list[3]).find(`span`).text());
-  console.log($(div_list[4]).find(`span`).text());
-  console.log($(div_list[5]).find(`span`).text());
+
 }
 
