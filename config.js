@@ -21,9 +21,11 @@ export const config = {
 
     },
     database: {
-      host: required('DATABASE_HOST'),
-      user: required('DATABASE_USER'),
-      pw: required('DATABASE_PW')
+      host: required('MARIA_HOST'),
+      port: required('MARIA_PORT'),
+      user: required('MARIA_USER'),
+      pw: required('MARIA_PW'),
+      db: required('MARIA_DB')
       
     }
 };

@@ -1,13 +1,13 @@
 import mariadb from "mariadb";
 import { config } from "../config.js";
 
-const pool = mariadb.createPool({
+export const pool = mariadb.createPool({
     host: config.database.host, 
     port: config.database.port,
     user: config.database.user, 
     password: config.database.pw,
-    // database:
-    connectionLimit: 5000
+    database: config.database.db,
+    connectionLimit: 50
 });
 
-module.exports = pool;
+// module.exports = pool;

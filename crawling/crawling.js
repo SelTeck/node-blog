@@ -2,7 +2,7 @@
 import axios from "axios";
 import cheerio from "cheerio";
 import xml2Json from "xml2js";
-
+import * as db from "../database/database.js";
 
 export class Crawling {
   constructor(word) {
@@ -18,10 +18,15 @@ export class Crawling {
 
       var items = obj.rss.channel[0].item;
       for (var item in items) {
-        var title = items[item].title[0];
-        var words = title.split(" - ");
-        if (words[0] === this._word) {
-          this.#crawlingUrl(items[item].link[0]);
+        let category = items[item].category[0];
+        let date = items[item].pubDate[0];
+
+
+        if (category === this._word) {
+          let reg_date = this.#changeDate(date);
+          console.log(`title is ${items[item].title[0]}, date is ${reg_date}`);
+          db.insertRss(items[item].title[0], items[item].description[0], items[item].link[0], reg_date);
+          // this.#crawlingUrl(items[item].link[0]);
         }
 
         // var category = items[item].category[0];
@@ -82,5 +87,16 @@ export class Crawling {
     console.log($(div_list[3]).find(`span`).text());
     console.log($(div_list[4]).find(`span`).text());
     console.log($(div_list[5]).find(`span`).text());
+  }
+
+  #changeDate(date) {
+    // const monthNames = {
+    //   month_names: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
+    //   month_names_short: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+    // };
+
+    let days = date.split(' ');
+    let month = "JanFebMarAprMayJunJulAugSepOctNovDec".indexOf(days[2]) / 3 + 1
+    return new Date(days[3], month - 1, parseInt(days[1]) + 1).toISOString().substring(0, 10);
   }
 }
