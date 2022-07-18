@@ -21,12 +21,11 @@ export class Crawling {
         let category = items[item].category[0];
         let date = items[item].pubDate[0];
 
-
         if (category === this._word) {
           let reg_date = this.#changeDate(date);
-          console.log(`title is ${items[item].title[0]}, date is ${reg_date}`);
+          // console.log(`title is ${items[item].title[0]}, date is ${reg_date}`);
           db.insertRss(items[item].title[0], items[item].description[0], items[item].link[0], reg_date);
-          // this.#crawlingUrl(items[item].link[0]);
+          this.#crawlingUrl(items[item].link[0]);
         }
 
         // var category = items[item].category[0];
@@ -72,21 +71,37 @@ export class Crawling {
     // let title = $("div.se-component-content > span.se-fs- se-ff-").text();
 
     let div_list = $("div.se-module.se-module-text");
-    if (div_list.length) {
-      console.log(`div_list.length is ${div_list.length}`);
-      // div_list.each((_, e) => {
-      //   console.log($(e).find(`span`).text());
-      // });
-    } else {
-      console.log(`div_list.lenth is zero!!!`);
-    }
+    // if (div_list.length) {
+    //   console.log(`div_list.length is ${div_list.length}`);
+    //   // div_list.each((_, e) => {
+    //   //   console.log($(e).find(`span`).text());
+    //   // });
+    // } else {
+    //   console.log(`div_list.lenth is zero!!!`);
+    // }
 
-    console.log($(div_list[0]).find(`span`).text());
-    console.log($(div_list[1]).find(`span`).text());
-    console.log($(div_list[2]).find(`span`).text());
-    console.log($(div_list[3]).find(`span`).text());
-    console.log($(div_list[4]).find(`span`).text());
-    console.log($(div_list[5]).find(`span`).text());
+    const getup_sub_count = 12;
+    const pain_diary_sub_count = 8;
+
+    let title = $(div_list[0]).find(`span`).text();
+    let splits = title.split(" - ");
+    let weather = $(div_list[1]).find(`span`).text().replace('날씨:', '');
+    let getUp = $(div_list[2]).find(`span`).text().substring(getup_sub_count) + '\r' + $(div_list[4]).find(`span`).text();
+    let sleep_point = $(div_list[3]).find(`span`).text().replace('수면 포인트:', '');
+    let diary = $(div_list[5]).find(`span`).text().substring(pain_diary_sub_count);
+    let count = diary.lastIndexOf('통증 강도');
+    let pain = diary.substring(count, diary.length - 2).replace('통증 강도:', '');
+    let pains = pain.split('~');
+    let pain_min = pains[0] === ' ' ? pains[1] : pains[0];
+    db.insertCrawling(title, weather, getUp, sleep_point, diary, pain_min, pains[1], splits[1].replaceAll('.', '-'));
+    // console.log(`pain min is ${paints[0]} and max is ${paints[1]}`);
+    // console.log('1' + $(div_list[0]).find(`span`).text());  // title
+    // console.log('2' + $(div_list[1]).find(`span`).text());  // weather
+    // console.log('3' + $(div_list[2]).find(`span`).text());  // 기상 후 몸 체크
+    // console.log('4' + $(div_list[3]).find(`span`).text());  // 수면 포인트
+    // console.log('5' + $(div_list[4]).find(`span`).text());  // 기상 후 몸 체크 내용
+    // console.log('6' + $(div_list[5]).find(`span`).text());  // CRPS 통증 기록 
+
   }
 
   #changeDate(date) {

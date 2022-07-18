@@ -16,12 +16,22 @@ export async function insertRss(title, summary, url, reg_date) {
     }
 }
 
-export async function insertCrawling(title, reg_date, pain_min, pain_max, content, weather) {
+export async function insertCrawling(title, weather, getup, sleep_point, pain_diary, pain_min, pain_max, reg_date) {
     let connection;
     try {
         connection = await pool.getConnection();
-        let query = 'insert into Rss_Crawling (title, red_date, pain_min, pain_max, content, weather) values (?, ?, ?, ?, ?)'
-        connection.query(query, [title, reg_date, pain_min, pain_max, content, weather]);
+        let query = 'insert into Rss_Crawling (' +
+            'title' +
+            ',weather' +
+            ',getup_diary' +
+            ',sleep_point' +
+            ',pain_diary' +
+            ',pain_min' +
+            ',pain_max' +
+            ',reg_date' +
+          ') values (?, ?, ?, ?, ?, ?, ?, ?)' + 
+          ' on duplicate key update reg_date = ?';
+        connection.query(query, [title, weather, getup, sleep_point, pain_diary, pain_min, pain_max, reg_date, reg_date]);
     } catch (error) {
         throw error
     }
