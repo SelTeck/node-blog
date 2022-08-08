@@ -18,7 +18,7 @@ export async function insertRss(title, summary, url, reg_date) {
     }
 
     if (connection) {
-        connection.end();
+        connection.release();
     }
 
     return rows;
@@ -44,7 +44,7 @@ export async function insertCrawling(weather, getup, sleep_point, pain_min, pain
     }
 
     if (connection) {
-        connection.end();
+        connection.release();
     }
 
     return rows;

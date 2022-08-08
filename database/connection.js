@@ -1,7 +1,7 @@
 import mariadb from "mariadb";
 import { config } from "../config.js";
 
-export const pool = mariadb.createPool({
+const pool = mariadb.createPool({
     host: config.database.host, 
     port: config.database.port,
     user: config.database.user, 
@@ -11,3 +11,14 @@ export const pool = mariadb.createPool({
 });
 
 // module.exports = pool;
+export const connection = await pool.getConnection();
+
+export function getConnection(callback) {
+    pool.getConnection(function (err, conn) {
+        if (!err) {
+            callback(conn);
+        } else {
+            conn.release();
+        }
+    });
+}
