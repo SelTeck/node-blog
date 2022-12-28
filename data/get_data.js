@@ -1,7 +1,9 @@
 
-import * as db from '../database/connection.js'
+import { connection } from '../database/connection.js'
+// import * as db from '../database/connection.js'
 
 export async function getAll() {
+    let rows;
     let query = 'SELECT R.title as TITLE' +
         ', R.synopsis  as DAIRY' +
         ', R.url AS URL' +
@@ -13,82 +15,28 @@ export async function getAll() {
         ' WHERE R.reg_date = C.reg_date' +
         ' ORDER BY R.reg_date DESC';
 
-
-    db.getConnection((conn) => {
-        console.log("connected ! connection id is " + conn.threadId);
-            conn.execute(query).then((result) => {
-                console.log(result.length);
+    try {
+        await connection.execute(query)
+            .then((result) => {
+                rows = result;
             });
-        conn.release(); //release to pool
-    });
-    
-    // return db.connection.execute(query).then(result);
-    // db.db.then(conn => {
-    //     console.log("connected ! connection id is " + conn.threadId);
-    //     conn.execute(query).then((result) => {
-    //         console.log(result.length);
-    //     });
-    //     conn.release(); //release to pool
-    // })
-    // .catch(error => {
-    //     console.log("not connected due to error: " + error);
-    // })
+        await connection.release();
+        // console.log('------connection release');
+        // console.log('------totalConnections', db.pool.totalConnections());
+        // console.log('------activeConnections', db.pool.activeConnections());
+        // console.log('------idleConnections', db.pool.idleConnections());
+    } catch (error) {
+        if (connection) await connection.release();
+        throw error;
+    }
 
-    // db.execute(query).then((result) => {
-    //     console.log(result.length);
-    // });
-    // db.release();
-
-    // db.then(conn => {
-    //     console.log("connected ! connection id is " + conn.threadId);
-    // conn.execute(query).then((result) => {
-    //     console.log(result.length);
-    // });
-    // conn.release(); //release to pool
-    //   })
-    //   .catch(err => {
-    //     console.log("not connected due to error: " + err);
-    //   });
-
-
-    // db.pool((err, conn) => {
-    //     if (err) {
-    //         console.log("not connected due to error: " + err);
-    //     } else {
-    //         console.log("connected ! connection id is " + conn.threadId);
-    //         conn.execute(query).then((result) => {
-    //             console.log(result.length);
-    //         });
-    //         conn.end();
-    //     }
-    // });
-
-    // let res;
-    // let connection;
-    // try {
-    //     // connection = await pool.getConnection();
-    //     console.log("connected ! connection id is " + db.threadId);
-    //             db.execute(query).then((result) => {
-    //                 console.log(result.length);
-    //             });
-    //             db.release();
-
-    // } catch (error) {
-    //     throw error;
-    // }
-
-    // if (connection) {
-    //     connection.release();
-    // }
-
-    // // console.log(res);
-    // return res;
+    return rows;
 }
 
 export async function getPaging(page, viewCount) {
-    let connection;
+
+    let result;
     try {
-        connection = pool.getConnection();
         let query = 'SELECT R.title as TITLE' +
             ', R.synopsis  as DAIRY' +
             ', R.url AS URL' +
@@ -100,10 +48,14 @@ export async function getPaging(page, viewCount) {
             ' WHERE R.reg_date = C.reg_date' +
             ' ORDER BY R.reg_date DESC' +
             ' LIMIT ?, ?';    // offset, view_count
-        return await db.query(query, [page, viewCount]);
-
+        
+        result = await connection.execute(query, [(page - 1), viewCount]);
+        await connection.release();
     } catch (error) {
-        return error;
+        if (connection) await connection.release();
+        throw error;
     }
+
+    return result;
 }
 
