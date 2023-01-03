@@ -24,7 +24,12 @@ export class Crawling {
         if (category === this._word) {
           let reg_date = this.#changeDate(date);
           // console.log(`title is ${items[item].title[0]}, date is ${reg_date}`);
-          db.insertRss(items[item].title[0], items[item].description[0], items[item].link[0], reg_date);
+          let title = items[item].title[0];
+          let start = title.indexOf("(") + 1
+          let end = title.lastIndexOf(")")
+          // let subject = title.substring(start, end);
+          // console.log(`subject is ${subject}` ) 
+          db.insertRss(title.substring(start, end), items[item].description[0], items[item].link[0], reg_date);
           this.#crawlingUrl(items[item].link[0]);
         }
 
