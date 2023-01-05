@@ -3,6 +3,7 @@ import axios from "axios";
 import cheerio from "cheerio";
 import xml2Json from "xml2js";
 import * as db from "../data/make_data.js";
+import * as loda from "../utils/common_utils.js"
 
 export class Crawling {
   constructor(word) {
@@ -96,10 +97,12 @@ export class Crawling {
     // 통증 강도 가져오기 
     let diary = $(div_list[5]).find(`span`).text().substring(pain_diary_sub_count);
     let count = diary.lastIndexOf('통증 강도');
-    let pain = diary.substring(count, diary.length - 2).replace('통증 강도:', '');
-    let pains = pain.split('~');
-    let pain_min = pains[0] === ' ' ? pains[1] : pains[0];
-    db.insertCrawling(weather, getUp, sleep_point, pain_min, pains[1], splits[1].replaceAll('.', '-'));
+    let pain = diary.substring(count, diary.length - 2).replace('통증 강도:', '').trim();
+    let pains = pain.split('~'); 
+    // let pain_min = pains[0].length == 0 ? pains[1] : pains[0]; 
+    db.insertCrawling(weather, getUp, sleep_point, 
+      pains[0].length == 0 ? pains[1] : pains[0],
+      pains[1], splits[1].replaceAll('.', '-'));
 
     // console.log(`pain min is ${paints[0]} and max is ${paints[1]}`);
     // console.log('1' + $(div_list[0]).find(`span`).text());  // title

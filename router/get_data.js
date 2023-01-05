@@ -21,8 +21,7 @@ const router = express.Router();
 router.get("/", crawlingData.getAll);
 
 // get Crawling Data to paging
-// router.get('/:page/viewCount/:viewCount', crawlingData.getPage);
-router.get("/:page/viewCount/:viewCount", crawlingData.getPage);
+router.get("/:page/:viewCount", crawlingData.getPage);
 
 router.get("/:days", crawlingData.getAverage);
 
