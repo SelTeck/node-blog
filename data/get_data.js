@@ -1,6 +1,6 @@
 
+import { getAverage } from '../controller/get_data.js';
 import { connection } from '../database/connection.js'
-// import * as db from '../database/connection.js'
 
 export async function getAll() {
     let rows;
@@ -56,6 +56,23 @@ export async function getPaging(page, viewCount) {
         throw error;
     }
 
+    return result;
+}
+
+export async function getAveragePain(day) {
+    let result;
+    try {
+        let query = 'SELECT' + 
+        ' (AVG(pain_min) + AVG(pain_max)) / 2 AS pain' +
+        ' FROM Rss_Crawling ORDER BY reg_date DESC LIMIT 0, ?' ;
+        
+        result = await connection.execute(query, day);
+        await connection.release();
+    } catch (error) {
+        if (connection) await connection.release();
+        throw error;
+    }
+    
     return result;
 }
 

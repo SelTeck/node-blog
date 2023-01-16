@@ -3,7 +3,7 @@ import axios from "axios";
 import cheerio from "cheerio";
 import xml2Json from "xml2js";
 import * as db from "../data/make_data.js";
-import * as loda from "../utils/common_utils.js"
+
 
 export class Crawling {
   constructor(word) {
