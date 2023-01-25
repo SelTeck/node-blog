@@ -1,5 +1,5 @@
 
-import { getAverage } from '../controller/get_data.js';
+
 import { connection } from '../database/connection.js'
 
 export async function getAll() {
@@ -44,6 +44,7 @@ export async function getPaging(page, viewCount) {
             ', C.sleep_point AS SP' +
             ', C.pain_min  AS PAIN_MIN' +
             ', C.pain_max AS PAIN_MAX' +
+            ', R.reg_date AS REG_DATE' +
             ' FROM Blog_Rss R JOIN Rss_Crawling C' +
             ' WHERE R.reg_date = C.reg_date' +
             ' ORDER BY R.reg_date DESC' +
@@ -59,7 +60,7 @@ export async function getPaging(page, viewCount) {
     return result;
 }
 
-export async function getAveragePain(day) {
+export async function getPainAverage(day) {
     let result;
     try {
         let query = 'SELECT' + 

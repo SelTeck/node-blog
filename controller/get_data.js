@@ -21,9 +21,9 @@ export async function getPage(req, res) {
     res.status(200).json(data);
 }
 
-export async function getAverage(req, res) {
+export async function getPainAverage(req, res) {
     console.log('called getAverage function');
     let day = req.params.days;
-    const data = await dataRepository.getAveragePain(day);
+    const data = await dataRepository.getPainAverage(day);
     res.status(200).json(data);
 }
