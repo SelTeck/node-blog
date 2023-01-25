@@ -1,4 +1,3 @@
-
 import * as dataRepository from '../data/get_data.js';
 
 export async function getAll(req, res) {

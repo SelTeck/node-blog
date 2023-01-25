@@ -120,7 +120,6 @@ export class Crawling {
     db.insertCrawling(weather, getUp, sleep_point, 
       pains[0].length == 0 ? pains[1] : pains[0],
       pains[1], reg_date.replaceAll('.', '-'));
-
     
   }
 
