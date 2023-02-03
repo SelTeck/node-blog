@@ -1,12 +1,12 @@
+
 import request from "request";
 import express from "express";
 import helmet from "helmet";
 import cors from "cors";
 import morgan from "morgan";
-import schedule from "node-schedule"
 import { Crawling } from "./crawling/crawling.js";
 import dataRouter from "./router/get_data.js";
-
+import authRouter from './router/auth.js';
 
 // const rule = '* 0 3 * * *';   // 매일 3시에 실행
 const word = "CRPS 환우의 기록";
@@ -20,6 +20,7 @@ app.use(helmet());
 app.use(cors());
 app.use(morgan('tiny'));    // 
 
+app.use('/auth', authRouter);
 app.use('/records', dataRouter);
 
 

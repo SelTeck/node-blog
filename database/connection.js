@@ -11,7 +11,7 @@ export const pool = mariadb.createPool({
 });
 
 // module.exports = pool;
-export const connection = await pool.getConnection();
+export const db = await pool.getConnection();
 
 export function getConnection(callback) {
     pool.getConnection(function (err, conn) {

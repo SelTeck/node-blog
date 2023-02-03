@@ -1,4 +1,4 @@
-import * as dataRepository from '../data/get_data.js';
+import * as dataRepository from '../data/data.js';
 
 export async function getAll(req, res) {
     console.log('called getAll function');

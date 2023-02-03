@@ -1,5 +1,5 @@
 import express from 'express';
-import * as crawlingData from '../controller/get_data.js';
+import * as crawlingData from '../controller/data.js';
 
 const router = express.Router();
 

@@ -1,5 +1,5 @@
 
-import { connection } from '../database/connection.js'
+import { db } from '../database/connection.js'
 
 export async function getAll() {
     let rows;
@@ -15,18 +15,15 @@ export async function getAll() {
         ' ORDER BY R.reg_date DESC';
 
     try {
-        await connection.execute(query)
+        await db.execute(query)
             .then((result) => {
                 rows = result;
             });
-        await connection.release();
-        // console.log('------connection release');
-        // console.log('------totalConnections', db.pool.totalConnections());
-        // console.log('------activeConnections', db.pool.activeConnections());
-        // console.log('------idleConnections', db.pool.idleConnections());
+        await db.release();
+
     } catch (error) {
-        if (connection) await connection.release();
-        throw error;
+            if (db) await db.release();
+            throw error;
     }
 
     return rows;
@@ -49,10 +46,10 @@ export async function getPaging(page, viewCount) {
             ' ORDER BY R.reg_date DESC' +
             ' LIMIT ?, ?';    // offset, view_count
         
-        result = await connection.execute(query, [(page - 1), viewCount]);
-        await connection.release();
+        result = await db.execute(query, [(page - 1), viewCount]);
+        await db.release();
     } catch (error) {
-        if (connection) await connection.release();
+        if (db) await db.release();
         throw error;
     }
 
@@ -66,10 +63,10 @@ export async function getPainAverage(day) {
         ' (AVG(pain_min) + AVG(pain_max)) / 2 AS pain' +
         ' FROM Rss_Crawling ORDER BY reg_date DESC LIMIT 0, ?' ;
         
-        result = await connection.execute(query, day);
-        await connection.release();
+        result = await db.execute(query, [day]);
+        await db.release();
     } catch (error) {
-        if (connection) await connection.release();
+        if (db) await db.release();
         throw error;
     }
     
