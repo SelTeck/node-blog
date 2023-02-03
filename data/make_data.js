@@ -12,7 +12,7 @@ export async function insertRss(title, summary, url, reg_date) {
             ', url' +
             ', reg_date' +
             ') VALUES (?, ?, ?, ?)';
-            rows = await connection.query(query, [title, summary, url, reg_date]);
+            rows = await connection.execute(query, [title, summary, url, reg_date]);
     } catch (err) {
         throw err;
     }
@@ -39,7 +39,7 @@ export async function insertCrawling(weather, getup, sleep_point, pain_min, pain
             ') VALUES (?, ?, ?, ?, ?, ?)'; 
             // + ' on duplicate key update reg_date = ?';
         
-        rows = await connection.query(query, [weather, getup, sleep_point, pain_min, pain_max, reg_date]);
+        rows = await connection.execute(query, [weather, getup, sleep_point, pain_min, pain_max, reg_date]);
     } catch (error) {
         throw error;
     }
