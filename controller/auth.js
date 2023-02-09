@@ -6,7 +6,8 @@ import jwt from 'jsonwebtoken';
 // Get users/:userId
 export async function signIn(req, res) {
     console.log(`called signIn function`);
-    let userId = req.params.userId;
+    // let userId = req.params.userId;
+    let userId = req.body;
     console.log(`userId is ${userId}`);
 
     const result = await authRepository.findByUser(userId);
