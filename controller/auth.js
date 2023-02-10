@@ -10,11 +10,9 @@ export async function signIn(req, res) {
     let userId = req.body;
     console.log(`userId is ${userId}`);
 
-    const result = await authRepository.findByUser(userId);
-    // JSON.stringify(result);
-    const exist = JSON.parse(JSON.stringify(result));
+    const result = await authRepository.findById(userId);
 
-    if (exist == 0) {
+    if (!result) {
         return res.status(401).json({message: 'Invalid user or password'});
     }
     
@@ -26,7 +24,7 @@ function createJwtToken(id) {
     return jwt.sign({ 
             id: id,
             isAdmin: false 
-        }, config.jwt.secret_key, {
+        }, config.jwt.secretKey, {
             expiresIn: config.jwt.expiresInSec,
         }
     );
