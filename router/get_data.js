@@ -1,5 +1,6 @@
 import express from 'express';
 import * as crawlingData from '../controller/data.js';
+import { isAuth } from '../middleware/auth.js';
 
 const router = express.Router();
 
@@ -21,9 +22,9 @@ const router = express.Router();
 router.get("/", crawlingData.getAll);
 
 // get Crawling Data to paging
-router.get("/list/:page/:viewCount", crawlingData.getPage);
+router.get("/list/:page/:viewCount", isAuth, crawlingData.getPage);
 
-router.get("/average/:days", crawlingData.getPainAverage);
+router.get("/average/:days", isAuth, crawlingData.getPainAverage);
 
 
 export default router;
