@@ -53,7 +53,7 @@ export class Crawling {
     try {
       return await axios.get(url);
     } catch (err) {
-      log(err);
+      console.log(err);
     }
   }
 
@@ -120,11 +120,14 @@ export class Crawling {
     let pain = diary.substring(count, diary.length - 2).replace('통증 강도:', '').trim();
     let pains = pain.split('~');
 
+    const regExp = /[\{\}\[\]\/?.,;:|\)*~`!^\-_+<>@\#$%&\\\=\(\'\"\【\】]/g;
+    let minimum = pains[0].length == 0 ? pains[1].trim() : pains[0].trim()
     db.insertCrawling(weather, getUp, sleep_point,
-      pains[0].length == 0 ? pains[1] : pains[0],
-      pains[1], reg_date.replaceAll('.', '-'));
-
+      minimum.replace(regExp, ''), pains[1].trim().replace(regExp, ''), 
+      reg_date.replaceAll('.', '-').trim()
+    );
   }
+  
 
   #changeDate(date) {
     // const monthNames = {
