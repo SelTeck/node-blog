@@ -12,7 +12,7 @@ function required(key, defaultValue = undefined) {
 
 export const config = {
     jwt: {
-      secret_key: required('JWT_SECRET_KEY'),
+      secretKey: required('JWT_SECRET_KEY'),
       expiresInSec: parseInt(required('JWT_EXPIRES_SEC', 86400))
     },
     bcrypt: { 
