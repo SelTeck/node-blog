@@ -112,18 +112,20 @@ export class Crawling {
     // 수면 후 정보 가져오기 
     let getUp = $(div_list[2]).find(`span`).text().substring(getup_sub_count);
     // 수면 점수 가져오기     
-    let sleep_point = $(div_list[3]).find(`span`).text().replace('수면 포인트:', '');
+    let sleep_point = $(div_list[3]).find(`span`).text().split(':')[1];
 
     // 통증 강도 가져오기 
+    const regExp = /[/ \【\】]/g;
     let diary = $(div_list[5]).find(`span`).text().substring(pain_diary_sub_count);
     let count = diary.lastIndexOf('통증 강도');
-    let pain = diary.substring(count, diary.length - 2).replace('통증 강도:', '').trim();
-    let pains = pain.split('~');
+    let pain = diary.substring(count, diary.length - 2).replace(regExp, '').replace('통증 강도:', '');
 
-    const regExp = /[\{\}\[\]\/?.,;:|\)*~`!^\-_+<>@\#$%&\\\=\(\'\"\【\】]/g;
-    let minimum = pains[0].length == 0 ? pains[1].trim() : pains[0].trim()
+    // const regExp = /[\{\}\[\]\/?.,;:|\)*~`!^\-_+<>@\#$%&\\\=\(\'\"]/g;
+    let pains = pain.split('~');
+    let minimum = pains[0].length == 0 ? pains[1] : pains[0];
+
     db.insertCrawling(weather, getUp, sleep_point,
-      minimum.replace(regExp, ''), pains[1].trim().replace(regExp, ''), 
+      minimum, pains[1], 
       reg_date.replaceAll('.', '-').trim()
     );
   }
