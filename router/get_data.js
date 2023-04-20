@@ -24,7 +24,12 @@ router.get("/", crawlingData.getAll);
 // get Crawling Data to paging
 router.get("/list/:page/:viewCount", isAuth, crawlingData.getPage);
 
-router.get("/average/:days", isAuth, crawlingData.getPainAverage);
+router.get("/detail/:rssIndex", isAuth, crawlingData.getContent);
 
+// router.get("/pain/max/:day", isAuth, crawlingData.getPainMax);
+
+// router.get("/pain/min/:day", isAuth, crawlingData.getPainMin);
+
+router.get("/pain/average/:days", isAuth, crawlingData.getPainAverage);
 
 export default router;

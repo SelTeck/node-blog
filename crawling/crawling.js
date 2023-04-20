@@ -73,23 +73,9 @@ export class Crawling {
 
   async #crawlingBlog(url) {
     const html = await this.#getHtml(url);
-    // console.log(`html is ${html.data}`);
     const $ = cheerio.load(html.data);
 
-    // console.log($("meta[property='og:title']").attr("content"));
-    // let title = $("div.se-component-content > span.se-fs- se-ff-").text();
-
     let div_list = $("div.se-module.se-module-text");
-    /*    
-        if (div_list.length) {
-          console.log(`div_list.length is ${div_list.length}`);
-          // div_list.each((_, e) => {
-          //   console.log($(e).find(`span`).text());
-          // });
-        } else {
-          console.log(`div_list.lenth is zero!!!`);
-        }
-    // */
     const getup_sub_count = 12;
     const pain_diary_sub_count = 8;
 
@@ -102,34 +88,38 @@ export class Crawling {
         console.log('6' + $(div_list[5]).find(`span`).text());  // CRPS 통증 기록 
     // */
 
-    let index = 0;
-    let title = $(div_list[0]).find(`span`).text();
-    let titles = title.split(" - ");
+    try {
+      let title = $(div_list[0]).find(`span`).text();
+      let titles = title.split(" - ");
 
-    let reg_date = titles[1].substring(0, titles[1].lastIndexOf('('));
-    let weather = $(div_list[1]).find(`span`).text().replace('날씨:', '');
+      let reg_date = titles[1].substring(0, titles[1].lastIndexOf('('));
+      let weather = $(div_list[1]).find(`span`).text().replace('날씨:', '');
 
-    // 수면 후 정보 가져오기 
-    let getUp = $(div_list[2]).find(`span`).text().substring(getup_sub_count);
-    // 수면 점수 가져오기     
-    let sleep_point = $(div_list[3]).find(`span`).text().split(':')[1];
+      // 수면 후 정보 가져오기 
+      let getUp = $(div_list[2]).find(`span`).text().substring(getup_sub_count);
+      // 수면 점수 가져오기     
+      let sleep_point = $(div_list[3]).find(`span`).text().split(':')[1];
 
-    // 통증 강도 가져오기 
-    const regExp = /[/ \【\】]/g;
-    let diary = $(div_list[5]).find(`span`).text().substring(pain_diary_sub_count);
-    let count = diary.lastIndexOf('통증 강도');
-    let pain = diary.substring(count, diary.length - 2).replace(regExp, '').replace('통증 강도:', '');
+      // 통증 강도 가져오기 
+      const regExp = /[/ \【\】]/g;
+      let diary = $(div_list[5]).find(`span`).text().substring(pain_diary_sub_count);
+      let count = diary.lastIndexOf('통증 강도');
+      let pain = diary.substring(count, diary.length - 2).replace(regExp, '').split(':')[1]; //replace('통증 강도:', '');
 
-    // const regExp = /[\{\}\[\]\/?.,;:|\)*~`!^\-_+<>@\#$%&\\\=\(\'\"]/g;
-    let pains = pain.split('~');
-    let minimum = pains[0].length == 0 ? pains[1] : pains[0];
+      // const regExp = /[\{\}\[\]\/?.,;:|\)*~`!^\-_+<>@\#$%&\\\=\(\'\"]/g;
+      let pains = pain.split('~');
+      let minimum = pains[0].length == 0 ? pains[1] : pains[0];
 
-    db.insertCrawling(weather, getUp, sleep_point,
-      minimum, pains[1], 
-      reg_date.replaceAll('.', '-')
-    );
+      // db.insertCrawlingContent(diary, reg_date.replaceAll('.', '-'));
+      db.insertCrawling(diary, weather, getUp, sleep_point,
+        minimum, pains[1],
+        reg_date.replaceAll('.', '-'),
+      );
+    } catch (err) {
+      throw err;
+    }
   }
-  
+
 
   #changeDate(date) {
     // const monthNames = {

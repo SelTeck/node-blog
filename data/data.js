@@ -56,6 +56,22 @@ export async function getPaging(page, viewCount) {
     return result;
 }
 
+export async function getContent(rssIndex) {
+    let result;
+
+    try{
+        let query = 'SELECT Content FROM Rss_Content WHERE Rss_Idx = ?';
+
+        result = await db.execute(query, [rssIndex]);
+        await db.release();
+    } catch(error) {
+        if (db) db.release();
+        throw error;
+    }
+
+    return result;
+}
+
 export async function getPainAverage(day) {
     let result;
     try {

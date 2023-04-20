@@ -13,16 +13,16 @@ const word = "CRPS 환우의 기록";
 const url = "https://rss.blog.naver.com/whitedevel.xml";
 const app = express();
 
-//const rule = '* * 3 * * *';   // 매일 3시에 실행
-const rule = '10 * * * * *';
-// const rule = new schedule.RecurrenceRule();
-// rule.minute = 1;
-// rule.tz = 'Asia/Seoul'
+//const rule = '* * 03 * * *';   // 매일 3시에 실행
+// const rule = '10 * * * * *';
+const rule = new schedule.RecurrenceRule();
+rule.hour = 3;
+rule.minute = 0;
+rule.tz = 'Asia/Seoul'
+
 const PORT = 8080;
 
-
 let crawling = new Crawling(word);
-
 
 app.use(express.json());
 app.use(helmet());
@@ -64,7 +64,14 @@ app.use((error, req, res, next) => {
 //     }
 // });
 
-
+request(url, function (err, res, data) {
+    if (!err && res.statusCode == 200) {
+        crawling.parseXML(data);
+    } else {
+        console.log(`error -> ${err}`);
+    }
+});
+/*
 schedule.scheduleJob(rule, function() {
     console.log(`called request, rule is ${rule}`);
     request(url, function (err, res, data) {
@@ -74,8 +81,8 @@ schedule.scheduleJob(rule, function() {
             console.log(`error -> ${err}`);
         }
     });
-});
-
+}); 
+// */
 
 app.listen(PORT);
 
