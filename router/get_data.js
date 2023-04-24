@@ -22,7 +22,7 @@ const router = express.Router();
 router.get("/", crawlingData.getAll);
 
 // get Crawling Data to paging
-router.get("/list/:page/:viewCount", isAuth, crawlingData.getPage);
+router.get("/list/:page/:viewCount", isAuth, crawlingData.getRssList);
 
 router.get("/detail/:rssIndex", isAuth, crawlingData.getContent);
 
@@ -30,6 +30,6 @@ router.get("/detail/:rssIndex", isAuth, crawlingData.getContent);
 
 // router.get("/pain/min/:day", isAuth, crawlingData.getPainMin);
 
-router.get("/pain/average/:days", isAuth, crawlingData.getPainAverage);
+router.get("/pain/average/:days", isAuth, crawlingData.getPainInfor);
 
 export default router;

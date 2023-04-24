@@ -29,21 +29,13 @@ export async function getAll() {
     return rows;
 }
 
-export async function getPaging(page, viewCount) {
+export async function getRssList(page, viewCount) {
 
     let result;
     try {
-        let query = 'SELECT R.title as TITLE' +
-            ', R.synopsis  as DAIRY' +
-            ', R.url AS URL' +
-            ', C.weather AS WEATHER' +
-            ', C.sleep_point AS SP' +
-            ', C.pain_min  AS PAIN_MIN' +
-            ', C.pain_max AS PAIN_MAX' +
-            ', R.reg_date AS REG_DATE' +
-            ' FROM Blog_Rss R JOIN Rss_Crawling C' +
-            ' WHERE R.reg_date = C.reg_date' +
-            ' ORDER BY R.reg_date DESC' +
+        let query = 'SELECT * ' + 
+            ' FROM Blog_Rss' +
+            ' ORDER BY reg_date DESC' +
             ' LIMIT ?, ?';    // offset, view_count
         
         result = await db.execute(query, [(page - 1), viewCount]);
@@ -72,11 +64,13 @@ export async function getContent(rssIndex) {
     return result;
 }
 
-export async function getPainAverage(day) {
+export async function getPainInfor(day) {
     let result;
     try {
         let query = 'SELECT' + 
-        ' (AVG(pain_min) + AVG(pain_max)) / 2 AS pain' +
+        ' Min(pain_min) AS PAIN_MIN' + 
+        ', Max(pain_max) AS PAIN_MAX' + 
+        ', (AVG(pain_min) + AVG(pain_max)) / 2 AS PAIN_AVG' +
         ' FROM Rss_Crawling ORDER BY reg_date DESC LIMIT 0, ?' ;
         
         result = await db.execute(query, [day]);

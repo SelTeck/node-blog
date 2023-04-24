@@ -7,7 +7,7 @@ export async function getAll(req, res) {
 }
 
 // Get records/:page/:viewCount
-export async function getPage(req, res) {
+export async function getRssList(req, res) {
     console.log('called getPage function');
     // let page = req.query.page;
     // let viewCount = req.query.viewCount;
@@ -16,7 +16,7 @@ export async function getPage(req, res) {
 
     console.log(`page is ${page} and viewCount is ${viewCount}`);
 
-    const data = await dataRepository.getPaging(page ? page : 1, viewCount ? viewCount: 10);
+    const data = await dataRepository.getRssList(page ? page : 1, viewCount ? viewCount: 10);
     res.status(200).json(data);
 }
 
@@ -35,9 +35,9 @@ export async function getContent(req, res) {
     }
 }
 
-export async function getPainAverage(req, res) {
+export async function getPainInfor(req, res) {
     console.log('called getAverage function');
     let day = req.params.days;
-    const data = await dataRepository.getPainAverage(day);
+    const data = await dataRepository.getPainInfor(day);
     res.status(200).json(data);
 }
