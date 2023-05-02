@@ -48,13 +48,13 @@ export async function getRssList(page, viewCount) {
     return result;
 }
 
-export async function getContent(rssIndex) {
+export async function getContent(rss_index) {
     let result;
 
     try{
-        let query = 'SELECT Content FROM Rss_Content WHERE Rss_Idx = ?';
+        let query = `SELECT * FROM Rss_Content WHERE Rss_Idx = '?'`;
 
-        result = await db.execute(query, [rssIndex]);
+        result = await db.execute(query, rss_index);
         await db.release();
     } catch(error) {
         if (db) db.release();
