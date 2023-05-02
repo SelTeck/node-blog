@@ -24,15 +24,23 @@ export class Crawling {
 
         if (category === this._word) {
           let reg_date = this.#changeDate(date);
-          // console.log(`title is ${items[item].title[0]}, date is ${reg_date}`);
           let title = items[item].title[0];
-          let start = title.indexOf("(") + 1
+          // console.log(`title is ${title}, date is ${reg_date}`);
+          let start = title.indexOf("(")
           let end = title.lastIndexOf(")")
+
+          let createAtTime = title.substring(0, start).split(' - ')[1].replaceAll('.', '-');
+                  
+          // if (reg_date != createAtTime) {
+          //   reg_date = createAtTime;
+          // }
+          
+          // console.log(`reg_date is ${reg_date}`);
           // let subject = title.substring(start, end);
-          db.insertRss(title.substring(start, end),
+          db.insertRss(title.substring(start + 1, end),
             items[item].description[0],
             items[item].link[0],
-            reg_date
+            reg_date != createAtTime ? createAtTime : reg_date
           );
           this.#crawlingUrl(items[item].link[0]);
         }
@@ -113,7 +121,7 @@ export class Crawling {
       // db.insertCrawlingContent(diary, reg_date.replaceAll('.', '-'));
       db.insertCrawling(diary, weather, getUp, sleep_point,
         minimum, pains[1],
-        reg_date.replaceAll('.', '-'),
+        reg_date.replaceAll('.', '-'), 
       );
     } catch (err) {
       throw err;
