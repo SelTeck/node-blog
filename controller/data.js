@@ -24,12 +24,12 @@ export async function getRssList(req, res) {
 export async function getContent(req, res) {
     console.log('called getContent function');
 
-    let rssIndex = req.params.rssIndex;
-    console.log(`rssIndex is ${rssIndex}`);
-    const data = await dataRepository.getContent(rssIndex);
+    let rss_index = req.params.rss_index;
+    console.log(`rss_index is ${rss_index}`);
+    const data = await dataRepository.getContent(rss_index);
 
     if (data.length != 0) {
-        res.status(200).json(data);
+        res.status(200).json(data[0]);
     } else {
         res.status(401).json({message: 'The data is not available.'});
     }
