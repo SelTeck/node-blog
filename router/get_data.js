@@ -24,7 +24,7 @@ router.get("/", crawlingData.getAll);
 // get Crawling Data to paging
 router.get("/list/:page/:viewCount", isAuth, crawlingData.getRssList);
 
-router.get("/detail/:rssIndex", isAuth, crawlingData.getContent);
+router.get("/detail/:rss_index", isAuth, crawlingData.getContent);
 
 // router.get("/pain/max/:day", isAuth, crawlingData.getPainMax);
 
