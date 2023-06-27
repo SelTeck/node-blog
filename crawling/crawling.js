@@ -4,6 +4,7 @@ import cheerio from "cheerio";
 import xml2Json from "xml2js";
 import * as db from "../data/make_data.js";
 
+const TitleWord = 'CRPS';
 
 export class Crawling {
   constructor(word) {
@@ -25,24 +26,21 @@ export class Crawling {
         if (category === this._word) {
           let reg_date = this.#changeDate(date);
           let title = items[item].title[0];
-          // console.log(`title is ${title}, date is ${reg_date}`);
-          let start = title.indexOf("(")
-          let end = title.lastIndexOf(")")
 
-          let createAtTime = title.substring(0, start).split(' - ')[1].replaceAll('.', '-');
-                  
-          // if (reg_date != createAtTime) {
-          //   reg_date = createAtTime;
-          // }
-          
-          // console.log(`reg_date is ${reg_date}`);
-          // let subject = title.substring(start, end);
-          db.insertRss(title.substring(start + 1, end),
-            items[item].description[0],
-            items[item].link[0],
-            reg_date != createAtTime ? createAtTime : reg_date
-          );
-          this.#crawlingUrl(items[item].link[0]);
+          if (title.startsWith(TitleWord)) {
+            // console.log(`title is ${title}, date is ${reg_date}`);
+            let start = title.indexOf("(")
+            let end = title.lastIndexOf(")")
+
+            let createAtTime = title.substring(0, start).split(' - ')[1].replaceAll('.', '-');
+                    
+            db.insertRss(title.substring(start + 1, end),
+              items[item].description[0],
+              items[item].link[0],
+              reg_date != createAtTime ? createAtTime : reg_date
+            );
+            this.#crawlingUrl(items[item].link[0]);
+          }
         }
 
         // var category = items[item].category[0];
@@ -106,21 +104,21 @@ export class Crawling {
       // 수면 후 정보 가져오기 
       let getUp = $(div_list[2]).find(`span`).text().substring(getup_sub_count);
       // 수면 점수 가져오기     
-      let sleep_point = $(div_list[3]).find(`span`).text().split(':')[1];
-
+      // const regExp = /[\{\}\[\]\/?.,;:|\)*~`!^\-_+<>@\#$%&\\\=\(\'\"]/g;
+      // const regExp = /[/ \【\】]/g;
+      const regex = /[^0-9]/g;
+      // let sleep_point = $(div_list[3]).find(`span`).text().split(':')[1];
+      let sleep_point = $(div_list[3]).find(`span`).text().replace(regex, '');
+      
       // 통증 강도 가져오기 
-      const regExp = /[/ \【\】]/g;
       let diary = $(div_list[5]).find(`span`).text().substring(pain_diary_sub_count);
       let count = diary.lastIndexOf('통증 강도');
-      let pain = diary.substring(count, diary.length - 2).replace(regExp, '').split(':')[1]; //replace('통증 강도:', '');
-
-      // const regExp = /[\{\}\[\]\/?.,;:|\)*~`!^\-_+<>@\#$%&\\\=\(\'\"]/g;
-      let pains = pain.split('~');
-      let minimum = pains[0].length == 0 ? pains[1] : pains[0];
-
-      // db.insertCrawlingContent(diary, reg_date.replaceAll('.', '-'));
+      let painInfo = diary.substring(count, diary.length - 2);
+      let pains = painInfo.match(/\d+/g);
+      
       db.insertCrawling(diary, weather, getUp, sleep_point,
-        minimum, pains[1],
+        pains.length == 1 ? pains[0] : pains[0], 
+        pains.length == 1 ? pains[0] : pains[1],
         reg_date.replaceAll('.', '-'), 
       );
     } catch (err) {

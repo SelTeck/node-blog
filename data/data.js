@@ -33,12 +33,17 @@ export async function getRssList(page, viewCount) {
 
     let result;
     try {
-        let query = 'SELECT * ' + 
+        let query = 'SELECT ' +
+            ' idx' + 
+            ', title ' + 
+            ', synopsis ' + 
+            ', url ' + 
+            ', DATE_FORMAT(reg_date, \'%Y-%m-%d\') AS createAtTime' +
             ' FROM Blog_Rss' +
             ' ORDER BY reg_date DESC' +
             ' LIMIT ?, ?';    // offset, view_count
         
-        result = await db.execute(query, [(page - 1), viewCount]);
+        result = await db.execute(query, [(page - 1) * viewCount, viewCount]);
         await db.release();
     } catch (error) {
         if (db) await db.release();
@@ -52,7 +57,7 @@ export async function getContent(rss_index) {
     let result;
 
     try{
-        let query = `SELECT * FROM Rss_Content WHERE Rss_Idx = '?'`;
+        let query = `SELECT * FROM Rss_Content WHERE Rss_Idx = ?`;
 
         result = await db.execute(query, rss_index);
         await db.release();
@@ -64,7 +69,7 @@ export async function getContent(rss_index) {
     return result;
 }
 
-export async function getPainInfor(day) {
+export async function getPainInfo(day) {
     let result;
     try {
         let query = 'SELECT' + 

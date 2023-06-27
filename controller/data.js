@@ -8,7 +8,7 @@ export async function getAll(req, res) {
 
 // Get records/:page/:viewCount
 export async function getRssList(req, res) {
-    console.log('called getPage function');
+    console.log('called getRssList function');
     // let page = req.query.page;
     // let viewCount = req.query.viewCount;
     let page = req.params.page;
@@ -16,7 +16,7 @@ export async function getRssList(req, res) {
 
     console.log(`page is ${page} and viewCount is ${viewCount}`);
 
-    const data = await dataRepository.getRssList(page ? page : 1, viewCount ? viewCount: 10);
+    const data = await dataRepository.getRssList(page, viewCount);
     res.status(200).json(data);
 }
 
