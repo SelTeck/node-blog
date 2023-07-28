@@ -8,7 +8,7 @@ export async function insertRss(title, summary, url, reg_date) {
     try {
         connection = await pool.getConnection();
 
-        let query = 'CALL USP_ENTER_RSS(?, ?, ?, ?)'
+        let query = 'CALL USP_ADD_BLOG_RSS(?, ?, ?, ?)'
         // let query = 'INSERT IGNORE INTO Blog_Rss(' +
         //     'title' +
         //     ', synopsis' +
@@ -33,7 +33,7 @@ export async function insertCrawling(diary, weather, getup, sleep_point, pain_mi
     let connection;
     try {
         connection = await pool.getConnection();
-        let query = 'CALL USP_ENTER_CRAWLING(?, ?, ?, ?, ?, ?, ?)'
+        let query = 'CALL USP_ADD_CRAWLING(?, ?, ?, ?, ?, ?, ?)'
         // let query = 'INSERT INTO Rss_Crawling (' +
         //     'weather' +
         //     ',getup_diary' +
@@ -62,7 +62,7 @@ export async function insertCrawlingContent(diary, reg_date) {
     
     try {
         connection = await pool.getConnection();
-        let query = 'CALL USP_ENTER_CONTENT(?, ?)';
+        let query = 'CALL USP_ADD_CONTENT(?, ?)';
         
         rows = await connection.execute(query, [diary, reg_date]);
         

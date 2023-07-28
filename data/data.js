@@ -98,7 +98,7 @@ export async function inputDailyEvent(crawlingIdx, takeMorning, takeEvening, ant
     activeMode, sleepMode, chargingStimulus, createAtTime) {
     let rows;
     try {
-        let query = 'CALL USP_INPUT_EVENT(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)'
+        let query = 'CALL USP_ADD_DAILY_EVENT(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
         rows = await db.execute(query, [crawlingIdx, takeMorning, takeEvening, antiAnalgesic, narcoticAnalgesic, usePath,
             activeMode, sleepMode, chargingStimulus, createAtTime]);
     } catch (error) {
