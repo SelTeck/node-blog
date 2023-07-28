@@ -7,6 +7,7 @@ export async function findById(userId) {
             `SELECT * FROM Account WHERE user_id = ?`, 
             [userId]
         );
+        
         await db.release();
         return result;
         

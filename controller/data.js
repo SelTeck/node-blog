@@ -25,19 +25,81 @@ export async function getContent(req, res) {
     console.log('called getContent function');
 
     let rss_index = req.params.rss_index;
-    console.log(`rss_index is ${rss_index}`);
-    const data = await dataRepository.getContent(rss_index);
+    
+    const result = await dataRepository.getContent(rss_index);
 
-    if (data.length != 0) {
-        res.status(200).json(data[0]);
+    if (result.length != 0) {
+        res.status(200).json(result[0]);
     } else {
         res.status(401).json({message: 'The data is not available.'});
     }
 }
 
-export async function getPainInfor(req, res) {
+// get records/page/viewCount
+export async function getPainInfo(req, res, next) {
     console.log('called getAverage function');
     let day = req.params.days;
-    const data = await dataRepository.getPainInfor(day);
-    res.status(200).json(data);
+    const result = await dataRepository.getPainInfo(day);
+
+    res.status(200).json(result);
+}
+
+// Post records/input/daily
+export async function inputDailyEvent(req, res, next) {
+    console.log('called inputDailyEvent function');
+    const { crawlingIdx, takeMorning, takeEvening, antiAnalgesic, 
+        narcoticAnalgesic, usePath, activeMode, sleepMode, chargingStimulus, createAtTime } = req.body;
+    
+
+    console.log(`crawlingIdx is ${crawlingIdx} `);
+    let result = await dataRepository.inputDailyEvent(crawlingIdx, takeMorning, takeEvening, 
+        antiAnalgesic, narcoticAnalgesic, usePath, activeMode, sleepMode, chargingStimulus, createAtTime);
+
+    if (!result) {
+        return res.status(401).json({message: 'Failed enter this information.'});
+    }
+
+    res.status(200).json({message: "OK"});
+}
+
+// POST records/input/StimulusInfo
+export async function inputStimulusInfo(req, res, next) {
+    console.log('called inputStimulusInfo function');
+    let {type, upright, lyingFront, lyingBack,lyingLeft, lyingRight, reclining} = req.body;
+    
+    let result = await dataRepository.inputStimulusInfo(type, upright, lyingFront, lyingBack,
+        lyingLeft, lyingRight, reclining );
+
+    if (!result) {
+        return res.status(401).json({message: 'Failed enter this information.'});
+    }
+
+    res.status(409).json({message: "OK"});
+}
+
+// GET records/data/stimulus/info
+export async function getStimulusInfo(req, res, next) {
+    console.log('called getStimulusInfo function');
+
+    let result = await dataRepository.getStimulusInfo();
+
+    if (!result) {
+        return res.status(401).json({message: 'Failed search Stimulus information.'});
+    }
+
+    res.status(200).json(result);   
+}
+
+// PUT records/
+export async function updateStimulusInfo(req, res, next) {
+    console.log('called updateStimulusInfo function');
+    let crawlingIdx = req.params.crawlingIdx;
+    let {activeMode, sleepMode, charging} = req.body;
+
+    let result = await dataRepository.updateStimulusInfo(crawlingIdx, activeMode, sleepMode, charging);
+    if (!result) {
+        return res.status(401).json({message: 'Failed update this information.'});
+    }
+    
+    res.status(200).json({message: "Update Succeed!!"});
 }

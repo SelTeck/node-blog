@@ -6,7 +6,7 @@ import cors from "cors";
 import morgan from "morgan";
 import schedule from "node-schedule";
 import { Crawling } from "./crawling/crawling.js";
-import dataRouter from "./router/get_data.js";
+import dataRouter from "./router/data.js";
 import authRouter from './router/auth.js';
 
 const word = "CRPS 환우의 기록";
