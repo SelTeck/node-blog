@@ -5,6 +5,11 @@ import * as authRepository from '../data/auth.js';
 import { getStimulusInfo } from '../data/data.js';
 import jwt from 'jsonwebtoken';
 
+export async function hello(req, res, next) {
+    console.log(`called hello function`);
+    res.status(200).json({message: "Hello!!!!"});
+}
+
 // post /auth/users
 export async function signIn(req, res, next) {
     console.log(`called signIn function`);
