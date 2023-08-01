@@ -32,11 +32,11 @@ router.get("/detail/:rss_index", isAuth, crawlingData.getContent);
 
 router.get("/pain/average/:days", isAuth, crawlingData.getPainInfo);
 
-router.post("/input/daily", crawlingData.inputDailyEvent);
+router.post("/input/daily", isAuth, crawlingData.inputDailyEvent);
 
-router.post("/input/stimulus/info", crawlingData.inputStimulusInfo);
+router.post("/input/stimulus/info", isAuth, crawlingData.inputStimulusInfo);
 
-router.get("/data/stimulus/info", crawlingData.getStimulusInfo);
+router.get("/data/stimulus/info", isAuth, crawlingData.getStimulusInfo);
 
 // "update/Stimulus/"
 router.post("update/stimulus");

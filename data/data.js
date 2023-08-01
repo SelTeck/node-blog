@@ -140,6 +140,10 @@ export async function inputStimulusInfo(type, upright, lyingFront, lyingBack,lyi
     return rows;
 }
 
+/**
+ * Stimulus Mode 가져오기 (최근 입력 날자 기준)
+ * @returns json
+ */
 export async function getStimulusInfo() {
     let rows;
     try {
@@ -171,7 +175,7 @@ export async function updateStimulusInfo(crawlingIndex, activeMode, sleepMode, c
                 'activeMode = ?' + 
                 ', sleepMode = ?' + 
                 ', charging = ?' + 
-                ', updateAtTime = ' + getDate() + 
+                ', updateAtTime = NOW()' + 
             ') WHERE crawlingIdx = ?';
 
         rows = await db.execute(query, [activeMode, sleepMode,  charging, crawlingIndex]);
