@@ -64,6 +64,7 @@ app.use((error, req, res, next) => {
 //     }
 // });
 
+/*
 request(url, function (err, res, data) {
     if (!err && res.statusCode == 200) {
         crawling.parseXML(data);
@@ -71,7 +72,9 @@ request(url, function (err, res, data) {
         console.log(`error -> ${err}`);
     }
 });
-/*
+// */
+
+//*
 schedule.scheduleJob(rule, function() {
     console.log(`called request, rule is ${rule}`);
     request(url, function (err, res, data) {
