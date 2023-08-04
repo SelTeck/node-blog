@@ -20,7 +20,8 @@ rule.hour = 3;
 rule.minute = 0;
 rule.tz = 'Asia/Seoul'
 
-const PORT = 8080;
+// const PORT = 8080;
+const PORT = 3000;
 
 let crawling = new Crawling(word);
 
