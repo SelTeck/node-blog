@@ -31,13 +31,16 @@ export class Crawling {
             // console.log(`title is ${title}, date is ${reg_date}`);
             let start = title.indexOf("(")
             let end = title.lastIndexOf(")")
-
-            let createAtTime = title.substring(0, start).split(' - ')[1].replaceAll('.', '-');
-                    
+            
+            const regex = /\d{2}.\d{2}.\d{2}/g;
+            let times = title.match(regex);
+            let createAtTime = times == null ? null : times.toString();
+            // let createAtTime = title.substring(0, start).split(' - ')[1].replaceAll('.', '-');
+            
             db.insertRss(title.substring(start + 1, end),
               items[item].description[0],
               items[item].link[0],
-              reg_date != createAtTime ? createAtTime : reg_date
+              createAtTime == null ? reg_date : (reg_date != createAtTime ? createAtTime : reg_date)
             );
             this.#crawlingUrl(items[item].link[0]);
           }
@@ -104,14 +107,14 @@ export class Crawling {
       // 수면 후 정보 가져오기 
       let getUp = $(div_list[2]).find(`span`).text().substring(getup_sub_count);
       // 수면 점수 가져오기     
-      // const regExp = /[\{\}\[\]\/?.,;:|\)*~`!^\-_+<>@\#$%&\\\=\(\'\"]/g;
-      // const regExp = /[/ \【\】]/g;
-      const regex = /[^0-9]/g;
-      // let sleep_point = $(div_list[3]).find(`span`).text().split(':')[1];
-      let sleep_point = $(div_list[3]).find(`span`).text().replace(regex, '');
+      let sleep_point = $(div_list[3]).find(`span`).text().replace(/[^0-9]/g, '');
       
       // 통증 강도 가져오기 
       let diary = $(div_list[5]).find(`span`).text().substring(pain_diary_sub_count);
+      if (diary == null) {
+        let aa = 0;
+      }
+
       let count = diary.lastIndexOf('통증 강도');
       let painInfo = diary.substring(count, diary.length - 2);
       let pains = painInfo.match(/\d+/g);

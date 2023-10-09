@@ -39,7 +39,7 @@ router.post("/input/stimulus/info", isAuth, crawlingData.inputStimulusInfo);
 router.get("/data/stimulus/info", isAuth, crawlingData.getStimulusInfo);
 
 // "update/Stimulus/"
-router.post("update/stimulus");
+router.put("/data/update/stimulus", isAuth, crawlingData.updateStimulusInfo);
 
 
 export default router;

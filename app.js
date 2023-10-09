@@ -20,8 +20,8 @@ rule.hour = 3;
 rule.minute = 0;
 rule.tz = 'Asia/Seoul'
 
-// const PORT = 8080;
-const PORT = 3000;
+const IS_DEV = true;
+const PORT = IS_DEV ? 8080 : 3000;
 
 let crawling = new Crawling(word);
 
@@ -65,7 +65,7 @@ app.use((error, req, res, next) => {
 //     }
 // });
 
-/*
+//*
 request(url, function (err, res, data) {
     if (!err && res.statusCode == 200) {
         crawling.parseXML(data);
@@ -75,7 +75,7 @@ request(url, function (err, res, data) {
 });
 // */
 
-//*
+/*
 schedule.scheduleJob(rule, function() {
     console.log(`called request, rule is ${rule}`);
     request(url, function (err, res, data) {
@@ -87,6 +87,20 @@ schedule.scheduleJob(rule, function() {
     });
 }); 
 // */
+
+/**
+ * 6시간 마다 한 번씩 호출
+ */  
+// setInterval(() => {
+//     console.log(`called request, rule is ${rule}`);
+//     request(url, function (err, res, data) {
+//         if (!err && res.statusCode == 200) {
+//             crawling.parseXML(data);
+//         } else {
+//             console.log(`error -> ${err}`);
+//         }
+//     });
+// }, 6 * 60 * 60 * 1000);
 
 app.listen(PORT);
 

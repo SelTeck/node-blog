@@ -14,8 +14,6 @@ export async function getRssList(req, res) {
     let page = req.params.page;
     let viewCount = req.params.viewCount;
 
-    console.log(`page is ${page} and viewCount is ${viewCount}`);
-
     const data = await dataRepository.getRssList(page, viewCount);
     res.status(200).json(data);
 }
@@ -51,8 +49,7 @@ export async function inputDailyEvent(req, res, next) {
         narcoticAnalgesic, usePath, activeMode, sleepMode, chargingStimulus, createAtTime } = req.body;
     
 
-    console.log(`crawlingIdx is ${crawlingIdx} `);
-    let result = await dataRepository.inputDailyEvent(crawlingIdx, takeMorning, takeEvening, 
+     let result = await dataRepository.inputDailyEvent(crawlingIdx, takeMorning, takeEvening, 
         antiAnalgesic, narcoticAnalgesic, usePath, activeMode, sleepMode, chargingStimulus, createAtTime);
 
     if (!result) {
