@@ -20,7 +20,7 @@ rule.hour = 3;
 rule.minute = 0;
 rule.tz = 'Asia/Seoul'
 
-const IS_DEV = true;
+const IS_DEV = false;
 const PORT = IS_DEV ? 8080 : 3000;
 
 let crawling = new Crawling(word);
@@ -43,29 +43,7 @@ app.use((error, req, res, next) => {
     res.sendStatus(500);
 });
 
-
-// setInterval(request, 60 * 1000);
-// setInterval(() => {
-//     request(url, function (err, res, data) {
-//         console.log(`called request, url is ${url}`)
-//         if (!err && res.statusCode == 200) {
-//             crawling.parseXML(data);
-//         } else {
-//             console.log(`error -> ${err}`);
-//         }
-//     });
-// }, 60 * 1000)
-
-// request(url, function (err, res, data) {
-//     // console(`called request, url is ${url}`)
-//     if (!err && res.statusCode == 200) {
-//         crawling.parseXML(data);
-//     } else {
-//         console.log(`error -> ${err}`);
-//     }
-// });
-
-//*
+/*
 request(url, function (err, res, data) {
     if (!err && res.statusCode == 200) {
         crawling.parseXML(data);
@@ -91,16 +69,16 @@ schedule.scheduleJob(rule, function() {
 /**
  * 6시간 마다 한 번씩 호출
  */  
-// setInterval(() => {
-//     console.log(`called request, rule is ${rule}`);
-//     request(url, function (err, res, data) {
-//         if (!err && res.statusCode == 200) {
-//             crawling.parseXML(data);
-//         } else {
-//             console.log(`error -> ${err}`);
-//         }
-//     });
-// }, 6 * 60 * 60 * 1000);
+setInterval(() => {
+    console.log(`called request, rule is ${rule}`);
+    request(url, function (err, res, data) {
+        if (!err && res.statusCode == 200) {
+            crawling.parseXML(data);
+        } else {
+            console.log(`error -> ${err}`);
+        }
+    });
+}, 6 * 60 * 60 * 1000);
 
 app.listen(PORT);
 
