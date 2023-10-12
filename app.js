@@ -67,7 +67,7 @@ schedule.scheduleJob(rule, function() {
 // */
 
 /**
- * 6시간 마다 한 번씩 호출
+ * 4시간 마다 한 번씩 호출
  */  
 setInterval(() => {
     console.log(`called request, rule is ${rule}`);
@@ -78,7 +78,7 @@ setInterval(() => {
             console.log(`error -> ${err}`);
         }
     });
-}, 6 * 60 * 60 * 1000);
+}, 4 * 60 * 60 * 1000);
 
 app.listen(PORT);
 
