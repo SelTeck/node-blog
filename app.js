@@ -21,6 +21,7 @@ rule.minute = 0;
 rule.tz = 'Asia/Seoul'
 
 const IS_DEV = false;
+const INTERVAL_TIME = 3;
 const PORT = IS_DEV ? 8080 : 3000;
 
 let crawling = new Crawling(word);
@@ -78,7 +79,7 @@ setInterval(() => {
             console.log(`error -> ${err}`);
         }
     });
-}, 3 * 60 * 60 * 1000);
+}, INTERVAL_TIME * 60 * 60 * 1000);
 
 app.listen(PORT);
 
