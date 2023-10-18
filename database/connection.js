@@ -7,6 +7,9 @@ export const pool = mariadb.createPool({
     user: config.database.user, 
     password: config.database.pw,
     database: config.database.db,
+    testWhileIdle: true,
+    validationQuery: 'SELECT 1',
+    validationInterval: 60 * 60 * 1000,
     connectionLimit: 50
 });
 
