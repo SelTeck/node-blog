@@ -94,19 +94,41 @@ export async function getPainInfo(day) {
     return result;
 }
 
-export async function inputDailyEvent(crawlingIdx, takeMorning, takeEvening, antiAnalgesic, narcoticAnalgesic, usePath,
-    activeMode, sleepMode, chargingStimulus, createAtTime) {
+export async function inputDailyComments(rssIndex, takeMorning, takeEvening, antiAnalgesic, narcoticAnalgesic, usePath,
+    activeMode, sleepMode, chargingStimulus, comments, createAtTime) {
     let rows;
     try {
-        let query = 'CALL USP_ADD_DAILY_EVENT(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
-        rows = await db.execute(query, [crawlingIdx, takeMorning, takeEvening, antiAnalgesic, narcoticAnalgesic, usePath,
-            activeMode, sleepMode, chargingStimulus, createAtTime]);
+        let query = 'CALL USP_ADD_DAILY_COMMENT(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
+        rows = await db.execute(query, [rssIndex, takeMorning, takeEvening, antiAnalgesic, narcoticAnalgesic, usePath,
+            activeMode, sleepMode, chargingStimulus, comments, createAtTime]);
     } catch (error) {
         if (db) await db.release();
         throw error;
     }
 
     if (db) await db.release();
+
+    return rows;
+}
+
+export async function updateDailyComments() {
+    
+}
+
+export async function getDailyComments(blogIndex) {
+    let rows;
+    try {
+        let query = 'SELECT c.*, si.activeMode, si.sleepMode, si.charging' + 
+            ' FROM Comment c LEFT JOIN StimulusInfo si' +
+            ' ON c.blogIndex = si.blogIndex WHERE c.blogIndex = ?'
+
+        row = await db.execute(query, [blogIndex]);
+    } catch (error) {
+        if (db) db.release();
+        throw error;
+    }
+
+    if (db) db.release();
 
     return rows;
 }

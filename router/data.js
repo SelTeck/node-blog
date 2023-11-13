@@ -32,7 +32,7 @@ router.get("/detail/:rss_index", isAuth, crawlingData.getContent);
 
 router.get("/pain/average/:days", isAuth, crawlingData.getPainInfo);
 
-router.post("/input/daily", isAuth, crawlingData.inputDailyEvent);
+router.post("/input/daily", isAuth, crawlingData.inputDailyComments);
 
 router.post("/input/stimulus/info", isAuth, crawlingData.inputStimulusInfo);
 

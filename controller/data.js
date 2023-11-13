@@ -43,20 +43,52 @@ export async function getPainInfo(req, res, next) {
 }
 
 // Post records/input/daily
-export async function inputDailyEvent(req, res, next) {
-    console.log('called inputDailyEvent function');
+export async function inputDailyComments(req, res, next) {
+    console.log('called inputDailyComments function');
     const { crawlingIdx, takeMorning, takeEvening, antiAnalgesic, 
-        narcoticAnalgesic, usePath, activeMode, sleepMode, chargingStimulus, createAtTime } = req.body;
+        narcoticAnalgesic, usePath, activeMode, sleepMode, chargingStimulus, comment, createAtTime } = req.body;
     
 
-     let result = await dataRepository.inputDailyEvent(crawlingIdx, takeMorning, takeEvening, 
-        antiAnalgesic, narcoticAnalgesic, usePath, activeMode, sleepMode, chargingStimulus, createAtTime);
+     let result = await dataRepository.inputDailyComments(crawlingIdx, takeMorning, takeEvening, 
+        antiAnalgesic, narcoticAnalgesic, usePath, activeMode, sleepMode, chargingStimulus, comment, createAtTime);
 
     if (!result) {
-        return res.status(401).json({message: 'Failed enter this information.'});
+        return res.status(401).json({message: 'Failed enter DailyComments information.'});
     }
 
     res.status(200).json({message: "OK"});
+}
+
+// Get records/data/daily:
+export async function getDailyComments(req, res, next) {
+    console.log('called getDailyComments function');
+
+    let blogIndex = req.params.blogIndex;
+
+    let result = await dataRepository.getDailyComments(blogIndex);
+
+    if (!result) {
+        return res.status(401).json({message: 'Failed search DailyComments information.'});
+    }
+
+    res.status(200).json(result);
+}
+
+// Update records/data/update/daily
+export async function updateDailyComments(req, res, next) {
+    console.log('called updateDailyComments function');
+
+    const { crawlingIdx, takeMorning, takeEvening, antiAnalgesic, 
+        narcoticAnalgesic, usePath, activeMode, sleepMode, chargingStimulus, comment, createAtTime } = req.body;
+
+    
+    let result = await dataRepository.updateDailyComments();
+
+    if (!result) {
+        return res.status(401).json({message: 'Failed update of DailyComments.'});
+    }
+
+    res.status(200).json({message: 'OK'});
 }
 
 // POST records/input/StimulusInfo
