@@ -95,12 +95,12 @@ export async function getPainInfo(day) {
 }
 
 export async function inputDailyComments(rssIndex, takeMorning, takeEvening, antiAnalgesic, narcoticAnalgesic, usePath,
-    activeMode, sleepMode, chargingStimulus, comments, createAtTime) {
+    activeMode, sleepMode, chargingStimulus, comments) {
     let rows;
     try {
         let query = 'CALL USP_ADD_DAILY_COMMENT(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
         rows = await db.execute(query, [rssIndex, takeMorning, takeEvening, antiAnalgesic, narcoticAnalgesic, usePath,
-            activeMode, sleepMode, chargingStimulus, comments, createAtTime]);
+            activeMode, sleepMode, chargingStimulus, comments]);
     } catch (error) {
         if (db) await db.release();
         throw error;

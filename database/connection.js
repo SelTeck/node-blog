@@ -10,7 +10,7 @@ export const pool = mariadb.createPool({
     testWhileIdle: true,
     validationQuery: 'SELECT 1',
     timeBetweenEvictionRunsMills: 60 * 60 * 1000,
-    testOnBorrow: true,
+    testOnBorrow: true, // 커넥션 풀에서 커넥션을 가져올 때 커넥션 유효 여부 확인 
     connectionLimit: 50
 });
 
