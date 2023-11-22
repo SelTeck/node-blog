@@ -9,7 +9,8 @@ export const pool = mariadb.createPool({
     database: config.database.db,
     testWhileIdle: true,
     validationQuery: 'SELECT 1',
-    validationInterval: 60 * 60 * 1000,
+    timeBetweenEvictionRunsMills: 60 * 60 * 1000,
+    testOnBorrow: true,
     connectionLimit: 50
 });
 
