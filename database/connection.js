@@ -8,7 +8,7 @@ export const pool = mariadb.createPool({
     password: config.database.pw,
     database: config.database.db,
     testWhileIdle: true,
-    validationQuery: 'SELECT 1',
+    validationQuery: 'SELECT 1 FROM dual',
     timeBetweenEvictionRunsMills: 60 * 60 * 1000,
     testOnBorrow: true, // 커넥션 풀에서 커넥션을 가져올 때 커넥션 유효 여부 확인 
     connectionLimit: 50
