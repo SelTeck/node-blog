@@ -79,10 +79,11 @@ export async function updateDailyComments(req, res, next) {
     console.log('called updateDailyComments function');
 
     const { crawlingIdx, takeMorning, takeEvening, antiAnalgesic, 
-        narcoticAnalgesic, usePath, activeMode, sleepMode, chargingStimulus, comment, createAtTime } = req.body;
+        narcoticAnalgesic, usePath, activeMode, sleepMode, chargingStimulus, comment} = req.body;
 
     
-    let result = await dataRepository.updateDailyComments();
+    let result = await dataRepository.updateDailyComments(crawlingIdx, takeMorning, takeEvening, antiAnalgesic, 
+        narcoticAnalgesic, usePath, activeMode, sleepMode, chargingStimulus, comment);
 
     if (!result) {
         return res.status(401).json({message: 'Failed update of DailyComments.'});

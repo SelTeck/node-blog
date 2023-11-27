@@ -111,8 +111,31 @@ export async function inputDailyComments(rssIndex, takeMorning, takeEvening, ant
     return rows;
 }
 
-export async function updateDailyComments() {
+export async function updateDailyComments(rssIndex, takeMorning, takeEvening, antiAnalgesic, narcoticAnalgesic, usePath,
+    activeMode, sleepMode, chargingStimulus, comments) {
     
+    let row;
+    try {
+        let query = 'UPDATE Comment c, StimulusInfo s' + 
+        ' SET' + 
+        ' c.Morning = ?' + 
+        ', c.Evening = ?' + 
+        ', c.Analgesic = ?' +
+        ', c.Narcotic = ?' +   
+        ', c.Path = ?' + 
+        ', c.comment = ?' + 
+        ', c.updateAtTime = NOW()' + 
+        ', s.activeMode = ?' + 
+        ', s.sleepMode = ?'+
+        ', s.charging = ?' + 
+        ', s.updateAtTime = NOW()' + 
+        ' WHERE c.blogIndex = ? AND s.blogIndex = ?';
+
+        db.query(query, [takeMorning, takeEvening, antiAnalgesic, narcoticAnalgesic, usePath, comments, 
+            activeMode, sleepMode, chargingStimulus, rssIndex, rssIndex]);
+    } catch (error) {
+        throw error;
+    }
 }
 
 export async function getDailyComments(blogIndex) {
@@ -193,12 +216,13 @@ export async function getStimulusInfo() {
 export async function updateStimulusInfo(crawlingIndex, activeMode, sleepMode, charging) {
     let rows;
     try {
-        let query = 'UPDATE StimulusInfo SET (' + 
-                'activeMode = ?' + 
+        let query = 'UPDATE StimulusInfo' +
+                ' SET ' + 
+                ' activeMode = ?' + 
                 ', sleepMode = ?' + 
                 ', charging = ?' + 
                 ', updateAtTime = NOW()' + 
-            ') WHERE crawlingIdx = ?';
+            ' WHERE crawlingIdx = ?';
 
         rows = await db.execute(query, [activeMode, sleepMode,  charging, crawlingIndex]);
     } catch (error) {
