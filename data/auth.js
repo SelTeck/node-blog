@@ -8,12 +8,12 @@ export async function findById(userId) {
             [userId]
         );
         
-        await db.release();
         return result;
         
     } catch (error) {
-        if (db) await db.release();
         throw error;
+    } finally {
+        if (db) await db.release();
     }
  }
  

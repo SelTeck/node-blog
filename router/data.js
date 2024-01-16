@@ -19,27 +19,25 @@ const router = express.Router();
  * }
  */
 
-router.get("/", crawlingData.getAll);
 
+router.get("/", crawlingData.getAll);
 // get Crawling Data to paging
 router.get("/list/:page/:viewCount", isAuth, crawlingData.getRssList);
-
 router.get("/detail/:rss_index", isAuth, crawlingData.getContent);
 
-// router.get("/pain/max/:day", isAuth, crawlingData.getPainMax);
-
-// router.get("/pain/min/:day", isAuth, crawlingData.getPainMin);
-
-router.get("/pain/average/:days", isAuth, crawlingData.getPainInfo);
-
-router.post("/input/daily", isAuth, crawlingData.inputDailyComments);
-
-router.post("/input/stimulus/info", isAuth, crawlingData.inputStimulusInfo);
-
+router.get("/data/pain/average/:days", isAuth, crawlingData.getPainAvgInfo);
+// 10, 20, 30, 60, 90, 120 별로 통증 Max, Min 정보를 가져온다.
+router.get("/data/pain/days/:day", isAuth, crawlingData.getPainDayInfo);
+router.get("/data/sleep/days/:day", isAuth, crawlingData.getSleepPointDaysInfo);
+router.get("/data/daily/comment", isAuth, crawlingData.getDailyComments);
 router.get("/data/stimulus/info", isAuth, crawlingData.getStimulusInfo);
 
-// "update/Stimulus/"
-router.put("/data/update/stimulus", isAuth, crawlingData.updateStimulusInfo);
 
+router.put("/data/update/daily", isAuth, crawlingData.updateDailyComments);
+// "update/Stimulus/"
+// router.put("/data/update/stimulus", isAuth, crawlingData.updateStimulusInfo);
+
+router.post("/data/input/daily", isAuth, crawlingData.inputDailyComments);
+router.post("/data/input/stimulus/info", isAuth, crawlingData.inputStimulusInfo);
 
 export default router;

@@ -2,7 +2,6 @@
 import { db } from '../database/connection.js'
 
 export async function getAll() {
-    let rows;
     let query = 'SELECT R.title as TITLE' +
         ', R.synopsis  as DAIRY' +
         ', R.url AS URL' +
@@ -15,23 +14,19 @@ export async function getAll() {
         ' ORDER BY R.reg_date DESC';
 
     try {
-        await db.execute(query)
+        return await db.execute(query)
             .then((result) => {
                 rows = result;
             });
       
     } catch (error) {
-        if (db) await db.release();
         throw error;
+    } finally {
+        if (db) await db.release();
     }
-
-    if (db) await db.release();
-
-    return rows;
 }
 
 export async function getRssList(page, viewCount) {
-    let result;
     try {
         let query = 'SELECT ' +
             ' idx' +
@@ -43,38 +38,29 @@ export async function getRssList(page, viewCount) {
             ' ORDER BY reg_date DESC' +
             ' LIMIT ?, ?';    // offset, view_count
 
-        result = await db.execute(query, [(page - 1) * viewCount, viewCount]);
+        return await db.execute(query, [(page - 1) * viewCount, viewCount]);
         
     } catch (error) {
-        if (db) await db.release();
         throw error;
+    } finally {
+        if (db) await db.release();
     }
-
-    if (db) await db.release();
-
-    return result;
 }
 
 export async function getContent(rss_index) {
-    let result;
-
     try {
         let query = `SELECT * FROM Rss_Content WHERE Rss_Idx = ?`;
 
-        result = await db.execute(query, rss_index);
+        return await db.execute(query, rss_index);
         
     } catch (error) {
-        if (db) db.release();
         throw error;
+    } finally {
+        if (db) await db.release();
     }
-
-    if (db) await db.release();
-
-    return result;
 }
 
-export async function getPainInfo(day) {
-    let result;
+export async function getPainAvgInfo(day) {
     try {
         let query = 'SELECT' +
             ' Min(pain_min) AS PAIN_MIN' +
@@ -82,39 +68,63 @@ export async function getPainInfo(day) {
             ', (AVG(pain_min) + AVG(pain_max)) / 2 AS PAIN_AVG' +
             ' FROM Rss_Crawling ORDER BY reg_date DESC LIMIT 0, ?';
 
-        result = await db.execute(query, [day]);
+        return await db.execute(query, [day]);
         
     } catch (error) {
         if (db) await db.release();
         throw error;
+    } finally {
+        if (db) await db.release();
     }
+}
 
-    if (db) await db.release();
+export async function getPainDaysInfo(day) {
+    try {
+        let query = 'SELECT' + 
+        ' pain_min AS MIN, pain_max AS MAX, reg_date AS DAY' + 
+        ' FROM FROM Rss_Crawling ORDER BY reg_date DESC LIMIT ?';
 
-    return result;
+        return db.execute(query, [day]);
+    } catch (error) {
+        throw error;
+    } finally {
+        if (db) await db.release();
+    }
+}
+
+export async function getSleepPointDaysInfo(day) {
+    let result;
+    try {
+        let query = 'SELECT' + 
+            ' sleep_point , reg_date as DAY' + 
+            ' FROM Rss_Crawling ORDER BY reg_date DESC LIMIT ?';
+
+        return db.execute(query, [day]);
+
+    } catch (error) {
+        throw error;
+    } finally {
+        if (db) db.release();
+    }
 }
 
 export async function inputDailyComments(rssIndex, takeMorning, takeEvening, antiAnalgesic, narcoticAnalgesic, usePath,
     activeMode, sleepMode, chargingStimulus, comments) {
-    let rows;
     try {
         let query = 'CALL USP_ADD_DAILY_COMMENT(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
-        rows = await db.execute(query, [rssIndex, takeMorning, takeEvening, antiAnalgesic, narcoticAnalgesic, usePath,
+        return await db.execute(query, [rssIndex, takeMorning, takeEvening, antiAnalgesic, narcoticAnalgesic, usePath,
             activeMode, sleepMode, chargingStimulus, comments]);
     } catch (error) {
         if (db) await db.release();
         throw error;
+    } finally {
+        if (db) await db.release();
     }
-
-    if (db) await db.release();
-
-    return rows;
 }
 
 export async function updateDailyComments(rssIndex, takeMorning, takeEvening, antiAnalgesic, narcoticAnalgesic, usePath,
     activeMode, sleepMode, chargingStimulus, comments) {
     
-    let row;
     try {
         let query = 'UPDATE Comment c, StimulusInfo s' + 
         ' SET' + 
@@ -131,29 +141,28 @@ export async function updateDailyComments(rssIndex, takeMorning, takeEvening, an
         ', s.updateAtTime = NOW()' + 
         ' WHERE c.blogIndex = ? AND s.blogIndex = ?';
 
-        db.query(query, [takeMorning, takeEvening, antiAnalgesic, narcoticAnalgesic, usePath, comments, 
+        return db.query(query, [takeMorning, takeEvening, antiAnalgesic, narcoticAnalgesic, usePath, comments, 
             activeMode, sleepMode, chargingStimulus, rssIndex, rssIndex]);
     } catch (error) {
+        if (db) await db.release();
         throw error;
+    } finally {
+        if (db) await db.release;
     }
 }
 
 export async function getDailyComments(blogIndex) {
-    let rows;
     try {
         let query = 'SELECT c.*, si.activeMode, si.sleepMode, si.charging' + 
             ' FROM Comment c LEFT JOIN StimulusInfo si' +
             ' ON c.blogIndex = si.blogIndex WHERE c.blogIndex = ?'
 
-        row = await db.execute(query, [blogIndex]);
+        return await db.execute(query, [blogIndex]);
     } catch (error) {
-        if (db) db.release();
         throw error;
+    } finally {
+        if (db) db.release();
     }
-
-    if (db) db.release();
-
-    return rows;
 }
 
 export async function inputStimulusInfo(type, upright, lyingFront, lyingBack,lyingLeft, lyingRight, reclining) {
@@ -173,16 +182,16 @@ export async function inputStimulusInfo(type, upright, lyingFront, lyingBack,lyi
             "?, ?, ?, ?, ?, ?, ?, NOW()"+  
         ")";
 
-        rows = await db.execute(query, [type, upright, lyingFront, lyingBack, lyingLeft, lyingRight, reclining]);
+        return await db.execute(query, [type, upright, lyingFront, lyingBack, lyingLeft, lyingRight, reclining]);
        
     } catch (error) {
-        if (db) await db.release();
         throw error;
+    } finally  {
+        if (db) await db.release();
     }
+   
 
-    if (db) await db.release();
-
-    return rows;
+    
 }
 
 /**
@@ -213,27 +222,27 @@ export async function getStimulusInfo() {
     return rows;
 }
 
-export async function updateStimulusInfo(crawlingIndex, activeMode, sleepMode, charging) {
-    let rows;
-    try {
-        let query = 'UPDATE StimulusInfo' +
-                ' SET ' + 
-                ' activeMode = ?' + 
-                ', sleepMode = ?' + 
-                ', charging = ?' + 
-                ', updateAtTime = NOW()' + 
-            ' WHERE crawlingIdx = ?';
+// export async function updateStimulusInfo(crawlingIndex, activeMode, sleepMode, charging) {
+//     let rows;
+//     try {
+//         let query = 'UPDATE StimulusInfo' +
+//                 ' SET ' + 
+//                 ' activeMode = ?' + 
+//                 ', sleepMode = ?' + 
+//                 ', charging = ?' + 
+//                 ', updateAtTime = NOW()' + 
+//             ' WHERE crawlingIdx = ?';
 
-        rows = await db.execute(query, [activeMode, sleepMode,  charging, crawlingIndex]);
-    } catch (error) {
-        if (db) db.release();
-        throw error;
-    }
+//         rows = await db.execute(query, [activeMode, sleepMode,  charging, crawlingIndex]);
+//     } catch (error) {
+//         if (db) db.release();
+//         throw error;
+//     }
 
-    if (db) await db.release();
+//     if (db) await db.release();
     
-    return rows;
-}
+//     return rows;
+// }
 
 function getToday() {
     var date = new Date();

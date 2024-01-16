@@ -24,9 +24,18 @@ export async function signIn(req, res, next) {
     }
     
     let token = createJwtToken(user);
+    res.status(200).json({token});
+}
+
+export async function getStimulusInfo(req, res, next) {
+    console.log(`called getStimulusInfo function`);
     let stimulusInfo = await getStimulusInfo();
     
-    res.status(200).json({token, stimulusInfo});
+    if (!stimulusInfo) {
+        return res.status(401).json({message: 'Stimulus information is not found.'});
+    }
+
+    res.status(200).json({stimulusInfo});
 }
 
 function createJwtToken(id) {

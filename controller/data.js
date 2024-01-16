@@ -42,7 +42,7 @@ export async function getPainInfo(req, res, next) {
     res.status(200).json(result);
 }
 
-// Post records/input/daily
+// Post records/data/input/daily
 export async function inputDailyComments(req, res, next) {
     console.log('called inputDailyComments function');
     const { crawlingIdx, takeMorning, takeEvening, antiAnalgesic, 
@@ -56,7 +56,7 @@ export async function inputDailyComments(req, res, next) {
         return res.status(401).json({message: 'Failed enter DailyComments information.'});
     }
 
-    res.status(200).json({message: "OK"});
+    res.status(409).json({message: "OK"});
 }
 
 // Get records/data/daily:

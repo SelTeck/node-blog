@@ -8,5 +8,7 @@ const router = express.Router();
 
 router.get('/hello', authData.hello);
 router.post('/users', authData.signIn); 
+router.get('/stimulus', authData.getStimulusInfo);
+router.get('');
 
 export default router;  
