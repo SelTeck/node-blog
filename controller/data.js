@@ -1,5 +1,6 @@
 import * as dataRepository from '../data/data.js';
 
+
 export async function getAll(req, res) {
     console.log('called getAll function');
     const data = await dataRepository.getAll();
@@ -19,7 +20,7 @@ export async function getRssList(req, res) {
 }
 
 // Get records/detail/:rssIndex
-export async function getContent(req, res) {
+export async function getContent(req, res, next) {
     console.log('called getContent function');
 
     let rss_index = req.params.rss_index;
@@ -34,10 +35,26 @@ export async function getContent(req, res) {
 }
 
 // get records/page/viewCount
-export async function getPainInfo(req, res, next) {
+export async function getPainAvgInfo(req, res, next) {
     console.log('called getAverage function');
     let day = req.params.days;
-    const result = await dataRepository.getPainInfo(day);
+    const result = await dataRepository.getPainAvgInfo(day);
+
+    res.status(200).json(result);
+}
+
+export async function getPainDaysInfo(req, res, next) {
+    console.log('called getPainDaysInfo function');
+    let day = req.params.days;
+    const result = await dataRepository.getPainDaysInfo(day);
+
+    res.status(200).json(result);
+}
+
+export async function getSleepPointDaysInfo(req, res, next) {
+    console.log('called getPainDaysInfo function');
+    let day = req.params.days;
+    const result = await dataRepository.getSleepPointDaysInfo(day);
 
     res.status(200).json(result);
 }
@@ -46,17 +63,35 @@ export async function getPainInfo(req, res, next) {
 export async function inputDailyComments(req, res, next) {
     console.log('called inputDailyComments function');
     const { crawlingIdx, takeMorning, takeEvening, antiAnalgesic, 
-        narcoticAnalgesic, usePath, activeMode, sleepMode, chargingStimulus, comment } = req.body;
+        narcoticAnalgesic, usePath, swelling, activeMode, sleepMode, chargingStimulus, comment } = req.body;
     
 
      let result = await dataRepository.inputDailyComments(crawlingIdx, takeMorning, takeEvening, 
-        antiAnalgesic, narcoticAnalgesic, usePath, activeMode, sleepMode, chargingStimulus, comment);
+        antiAnalgesic, narcoticAnalgesic, usePath, swelling, activeMode, sleepMode, chargingStimulus, comment);
 
     if (!result) {
         return res.status(401).json({message: 'Failed enter DailyComments information.'});
     }
 
     res.status(409).json({message: "OK"});
+}
+
+// Update records/data/update/daily
+export async function updateDailyComments(req, res, next) {
+    console.log('called updateDailyComments function');
+
+    const { crawlingIdx, takeMorning, takeEvening, antiAnalgesic, 
+        narcoticAnalgesic, usePath, swelling, activeMode, sleepMode, chargingStimulus, comment} = req.body;
+
+    
+    let result = await dataRepository.updateDailyComments(crawlingIdx, takeMorning, takeEvening, antiAnalgesic, 
+        narcoticAnalgesic, usePath, swelling, activeMode, sleepMode, chargingStimulus, comment);
+
+    if (!result) {
+        return res.status(401).json({message: 'Failed update of DailyComments.'});
+    }
+
+    res.status(200).json({message: 'OK'});
 }
 
 // Get records/data/daily:
@@ -66,30 +101,12 @@ export async function getDailyComments(req, res, next) {
     let blogIndex = req.params.blogIndex;
 
     let result = await dataRepository.getDailyComments(blogIndex);
-
-    if (!result) {
+    
+    if (!result || result.length == 0) {
         return res.status(401).json({message: 'Failed search DailyComments information.'});
     }
 
-    res.status(200).json(result);
-}
-
-// Update records/data/update/daily
-export async function updateDailyComments(req, res, next) {
-    console.log('called updateDailyComments function');
-
-    const { crawlingIdx, takeMorning, takeEvening, antiAnalgesic, 
-        narcoticAnalgesic, usePath, activeMode, sleepMode, chargingStimulus, comment} = req.body;
-
-    
-    let result = await dataRepository.updateDailyComments(crawlingIdx, takeMorning, takeEvening, antiAnalgesic, 
-        narcoticAnalgesic, usePath, activeMode, sleepMode, chargingStimulus, comment);
-
-    if (!result) {
-        return res.status(401).json({message: 'Failed update of DailyComments.'});
-    }
-
-    res.status(200).json({message: 'OK'});
+    res.status(200).json(result[0]);
 }
 
 // POST records/input/StimulusInfo
@@ -120,16 +137,30 @@ export async function getStimulusInfo(req, res, next) {
     res.status(200).json(result);   
 }
 
-// PUT records/
-export async function updateStimulusInfo(req, res, next) {
-    console.log('called updateStimulusInfo function');
-    let crawlingIdx = req.params.crawlingIdx;
-    let {activeMode, sleepMode, charging} = req.body;
+// GET record/data/stimulus/detail:
+export async function getStimulusTypeDetail(req, res, next) {
+    console.log('called getStimulusTypeDetail function');
 
-    let result = await dataRepository.updateStimulusInfo(crawlingIdx, activeMode, sleepMode, charging);
+    let nowIndex = req.params.nowIndex;
+    let result = await dataRepository.getStimulusTypeDetail(nowIndex);
+
     if (!result) {
-        return res.status(401).json({message: 'Failed update this information.'});
+        return res.status(401).json({message: 'Failed search Stimulus information.'});
     }
-    
-    res.status(200).json({message: "Update Succeed!!"});
+
+    res.status(200).json(result[0]);
 }
+
+// // PUT records/
+// export async function updateStimulusInfo(req, res, next) {
+//     console.log('called updateStimulusInfo function');
+//     let crawlingIdx = req.params.crawlingIdx;
+//     let {activeMode, sleepMode, charging} = req.body;
+
+//     let result = await dataRepository.updateStimulusInfo(crawlingIdx, activeMode, sleepMode, charging);
+//     if (!result) {
+//         return res.status(401).json({message: 'Failed update this information.'});
+//     }
+    
+//     res.status(200).json({message: "Update Succeed!!"});
+// }
