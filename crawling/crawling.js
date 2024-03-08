@@ -2,7 +2,7 @@
 import axios from "axios";
 import cheerio from "cheerio";
 import xml2Json from "xml2js";
-import * as db from "../data/make_data.js";
+import * as make_data from "../data/make_data.js";
 
 const TitleWord = 'CRPS';
 
@@ -37,7 +37,7 @@ export class Crawling {
             let createAtTime = times == null ? null : times.toString();
             // let createAtTime = title.substring(0, start).split(' - ')[1].replaceAll('.', '-');
             
-            db.insertRss(title.substring(start + 1, end),
+            make_data.insertRss(title.substring(start + 1, end),
               items[item].description[0],
               items[item].link[0],
               createAtTime == null ? reg_date : (reg_date != createAtTime ? createAtTime : reg_date)
@@ -86,8 +86,7 @@ export class Crawling {
 
     let div_list = $("div.se-module.se-module-text");
     const getup_sub_count = 12;
-    const pain_diary_sub_count = 8;
-
+    
     /*
         console.log('1' + $(div_list[0]).find(`span`).text());  // title
         console.log('2' + $(div_list[1]).find(`span`).text());  // weather
@@ -96,7 +95,7 @@ export class Crawling {
         console.log('5' + $(div_list[4]).find(`span`).text());  // 기상 후 몸 체크 내용
         console.log('6' + $(div_list[5]).find(`span`).text());  // CRPS 통증 기록 
     // */
-
+    console.log(div_list.length);
     try {
       let title = $(div_list[0]).find(`span`).text();
       let titles = title.split(" - ");
@@ -110,23 +109,23 @@ export class Crawling {
       let sleep_point = $(div_list[3]).find(`span`).text().replace(/[^0-9]/g, '');
       
       // 통증 강도 가져오기 
-      let diary = $(div_list[5]).find(`span`).text().substring(pain_diary_sub_count);
-      if (diary == null) {
-        let aa = 0;
-      }
-
+      // let diaryText = $(div_list[5]).find(`span`).text();
+      // let diaryIndex = diaryText.replace('【오늘의 기록】', '')
+      
+      let diary = $(div_list[5]).find(`span`).text().replace('【오늘의 기록】', '');
+      
       let count = diary.lastIndexOf('통증 강도');
       let painInfo = diary.substring(count, diary.length - 2);
       let pains = painInfo.match(/\d+/g);
+      let painMin = pains.length == 1 ? pains[0] : pains[0];
+      let painMax = pains.length == 1 ? pains[0] : pains[1];
       
-      db.insertCrawling(diary, weather, getUp, sleep_point,
-        pains.length == 1 ? pains[0] : pains[0], 
-        pains.length == 1 ? pains[0] : pains[1],
-        reg_date.replaceAll('.', '-'), 
+      make_data.insertCrawling(diary, weather, getUp, sleep_point,
+        painMin, painMax, reg_date.replaceAll('.', '-'), 
       );
     } catch (err) {
       throw err;
-    }
+    } 
   }
 
 
