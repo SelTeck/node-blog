@@ -21,7 +21,7 @@ rule.minute = 0;
 rule.tz = 'Asia/Seoul'
 
 const IS_DEV = false;
-const INTERVAL_TIME = 1
+const INTERVAL_TIME = 2;
 const PORT = IS_DEV ? 8080 : 3000;
 
 let crawling = new Crawling(word);
