@@ -21,7 +21,7 @@ rule.minute = 0;
 rule.tz = 'Asia/Seoul'
 
 const IS_DEV = false;
-const INTERVAL_TIME = 3;
+const INTERVAL_TIME = 1
 const PORT = IS_DEV ? 8080 : 3000;
 
 let crawling = new Crawling(word);
@@ -68,7 +68,7 @@ schedule.scheduleJob(rule, function() {
 // */
 
 /**
- * 3시간 마다 한 번씩 호출
+ * 1시간 마다 한 번씩 호출
  */  
 setInterval(() => {
     console.log(`called request, rule is ${rule}`);
