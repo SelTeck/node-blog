@@ -109,11 +109,11 @@ export async function getSleepPointDaysInfo(day) {
 }
 
 export async function inputDailyComments(rssIndex, takeMorning, takeEvening, antiAnalgesic, narcoticAnalgesic, usePath,
-    activeMode, sleepMode, chargingStimulus, comments) {
+    swelling, activeMode, sleepMode, chargingStimulus, comments) {
     try {
-        let query = 'CALL USP_ADD_DAILY_COMMENT(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
+        let query = 'CALL USP_ADD_DAILY_COMMENT(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
         return await db.execute(query, [rssIndex, takeMorning, takeEvening, antiAnalgesic, narcoticAnalgesic, usePath,
-            activeMode, sleepMode, chargingStimulus, comments]);
+            swelling, activeMode, sleepMode, chargingStimulus, comments]);
     } catch (error) {
         if (db) await db.release();
         throw error;
@@ -123,26 +123,28 @@ export async function inputDailyComments(rssIndex, takeMorning, takeEvening, ant
 }
 
 export async function updateDailyComments(rssIndex, takeMorning, takeEvening, antiAnalgesic, narcoticAnalgesic, usePath,
-    activeMode, sleepMode, chargingStimulus, comments) {
+    swelling, activeMode, sleepMode, chargingStimulus, comments) {
     
     try {
-        let query = 'UPDATE Comment c, StimulusInfo s' + 
+        let query = 'UPDATE Comment c, Swelling w, StimulusUseInfo s' + 
         ' SET' + 
         ' c.Morning = ?' + 
         ', c.Evening = ?' + 
         ', c.Analgesic = ?' +
         ', c.Narcotic = ?' +   
-        ', c.Path = ?' + 
-        ', c.comment = ?' + 
+        ', c.usePath = ?' + 
+        ', c.Comments = ?' + 
         ', c.updateAtTime = NOW()' + 
         ', s.activeMode = ?' + 
         ', s.sleepMode = ?'+
         ', s.charging = ?' + 
         ', s.updateAtTime = NOW()' + 
-        ' WHERE c.blogIndex = ? AND s.blogIndex = ?';
+        ', w.swellingLv = ?' + 
+        ', w.updateAtTime = NOW()'
+        ' WHERE c.blogIndex = ? AND s.blogIndex = ? AND w.blogIndex = ?';
 
         return db.query(query, [takeMorning, takeEvening, antiAnalgesic, narcoticAnalgesic, usePath, comments, 
-            activeMode, sleepMode, chargingStimulus, rssIndex, rssIndex]);
+            activeMode, sleepMode, chargingStimulus, swelling, rssIndex, rssIndex, rssIndex]);
     } catch (error) {
         if (db) await db.release();
         throw error;
@@ -153,9 +155,19 @@ export async function updateDailyComments(rssIndex, takeMorning, takeEvening, an
 
 export async function getDailyComments(blogIndex) {
     try {
-        let query = 'SELECT c.*, si.activeMode, si.sleepMode, si.charging' + 
-            ' FROM Comment c LEFT JOIN StimulusInfo si' +
-            ' ON c.blogIndex = si.blogIndex WHERE c.blogIndex = ?'
+        let query = 'SELECT c.*' + 
+        ', w.swellingLv' + 
+        // ', IFNULL((SELECT `type` FROM StimulusType WHERE `index` = si.activeMode), \'N\') as activeMode' + 
+        // ', IFNULL((SELECT `type` FROM StimulusType WHERE `index` = si.sleepMode), \'N\') as sleepMode' +  
+        ', si.activeMode' +
+        ', si.sleepMode' + 
+        ', si.charging' + 
+        ' FROM Comment c' + 
+        ' LEFT JOIN StimulusUseInfo si' + 
+        ' ON c.blogIndex = si.blogIndex' + 
+        ' LEFT JOIN Swelling w' + 
+        ' ON c.blogIndex = w.blogIndex' + 
+        ' WHERE c.blogIndex = ?';
 
         return await db.execute(query, [blogIndex]);
     } catch (error) {
@@ -166,8 +178,6 @@ export async function getDailyComments(blogIndex) {
 }
 
 export async function inputStimulusInfo(type, upright, lyingFront, lyingBack,lyingLeft, lyingRight, reclining) {
-    let rows;
-   
     try {
         let query = "INSERT INTO StimulusType (" + 
            "type" +
@@ -189,9 +199,6 @@ export async function inputStimulusInfo(type, upright, lyingFront, lyingBack,lyi
     } finally  {
         if (db) await db.release();
     }
-   
-
-    
 }
 
 /**
@@ -199,7 +206,6 @@ export async function inputStimulusInfo(type, upright, lyingFront, lyingBack,lyi
  * @returns json
  */
 export async function getStimulusInfo() {
-    let rows;
     try {
         let query = "SELECT type, \`index\`, createAtTime " +  
         "FROM StimulusType " + 
@@ -211,15 +217,25 @@ export async function getStimulusInfo() {
            ") " +
         "ORDER BY type";
 
-        rows = db.execute(query);
+        return db.execute(query);
     } catch (error) {
-        if (db) db.release();
         throw error;
+    } finally {
+        if (db) db.release();
     }
 
-    if (db) db.release();
     
-    return rows;
+}
+
+export async function getStimulusTypeDetail(nowIndex) {
+    try {
+        let query = 'SELECT * FROM StimulusType WHERE `index` = ?;'
+        return db.execute(query, [nowIndex]);
+    } catch (error) {
+        throw error;
+    } finally {
+        if (db) db.release();
+    }
 }
 
 // export async function updateStimulusInfo(crawlingIndex, activeMode, sleepMode, charging) {
