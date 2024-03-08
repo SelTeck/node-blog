@@ -1,8 +1,8 @@
 
 import { config } from '../config.js';
 import * as authRepository from '../data/auth.js';
-// import * as dataRepository from '../data/data.js';
-import { getStimulusInfo } from '../data/data.js';
+import * as dataRepository from '../data/data.js';
+
 import jwt from 'jsonwebtoken';
 
 export async function hello(req, res, next) {
@@ -29,7 +29,7 @@ export async function signIn(req, res, next) {
 
 export async function getStimulusInfo(req, res, next) {
     console.log(`called getStimulusInfo function`);
-    let stimulusInfo = await getStimulusInfo();
+    let stimulusInfo = await dataRepository.getStimulusInfo();
     
     if (!stimulusInfo) {
         return res.status(401).json({message: 'Stimulus information is not found.'});

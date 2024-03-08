@@ -27,11 +27,11 @@ router.get("/detail/:rss_index", isAuth, crawlingData.getContent);
 
 router.get("/data/pain/average/:days", isAuth, crawlingData.getPainAvgInfo);
 // 10, 20, 30, 60, 90, 120 별로 통증 Max, Min 정보를 가져온다.
-router.get("/data/pain/days/:day", isAuth, crawlingData.getPainDayInfo);
+router.get("/data/pain/days/:day", isAuth, crawlingData.getPainDaysInfo);
 router.get("/data/sleep/days/:day", isAuth, crawlingData.getSleepPointDaysInfo);
-router.get("/data/daily/comment", isAuth, crawlingData.getDailyComments);
+router.get("/data/daily/comment/:blogIndex", isAuth, crawlingData.getDailyComments);
 router.get("/data/stimulus/info", isAuth, crawlingData.getStimulusInfo);
-
+router.get("/data/stimulus/detail/:nowIndex", isAuth, crawlingData.getStimulusTypeDetail);
 
 router.put("/data/update/daily", isAuth, crawlingData.updateDailyComments);
 // "update/Stimulus/"
