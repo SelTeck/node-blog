@@ -25,7 +25,7 @@ router.get("/", crawlingData.getAll);
 router.get("/list/:page/:viewCount", isAuth, crawlingData.getRssList);
 router.get("/detail/:rss_index", isAuth, crawlingData.getContent);
 
-router.get("/data/pain/average/:days", isAuth, crawlingData.getPainAvgInfo);
+router.get("/data/pain/average/:day", isAuth, crawlingData.getPainAvgInfo);
 // 10, 20, 30, 60, 90, 120 별로 통증 Max, Min 정보를 가져온다.
 router.get("/data/pain/days/:day", isAuth, crawlingData.getPainDaysInfo);
 router.get("/data/sleep/days/:day", isAuth, crawlingData.getSleepPointDaysInfo);

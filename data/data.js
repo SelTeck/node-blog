@@ -82,7 +82,7 @@ export async function getPainDaysInfo(day) {
     try {
         let query = 'SELECT' + 
         ' pain_min AS MIN, pain_max AS MAX, reg_date AS DAY' + 
-        ' FROM FROM Rss_Crawling ORDER BY reg_date DESC LIMIT ?';
+        ' FROM Rss_Crawling ORDER BY reg_date DESC LIMIT ?';
 
         return db.execute(query, [day]);
     } catch (error) {
@@ -96,8 +96,12 @@ export async function getSleepPointDaysInfo(day) {
     let result;
     try {
         let query = 'SELECT' + 
-            ' sleep_point , reg_date as DAY' + 
-            ' FROM Rss_Crawling ORDER BY reg_date DESC LIMIT ?';
+        ' sleep_point, SUBSTRING_INDEX(getup_diary, \'없음 <\', 1) AS getup_diary , reg_date' +
+        ' FROM Rss_Crawling rc  ORDER BY reg_date DESC LIMIT ?;';        
+        
+        // 'SELECT' + 
+        //     ' sleep_point , reg_date as DAY' + 
+        //     ' FROM Rss_Crawling ORDER BY reg_date DESC LIMIT ?';
 
         return db.execute(query, [day]);
 

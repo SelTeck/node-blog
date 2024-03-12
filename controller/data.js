@@ -37,7 +37,7 @@ export async function getContent(req, res, next) {
 // get records/page/viewCount
 export async function getPainAvgInfo(req, res, next) {
     console.log('called getAverage function');
-    let day = req.params.days;
+    let day = req.params.day;
     const result = await dataRepository.getPainAvgInfo(day);
 
     res.status(200).json(result);
@@ -45,7 +45,7 @@ export async function getPainAvgInfo(req, res, next) {
 
 export async function getPainDaysInfo(req, res, next) {
     console.log('called getPainDaysInfo function');
-    let day = req.params.days;
+    let day = req.params.day;
     const result = await dataRepository.getPainDaysInfo(day);
 
     res.status(200).json(result);
@@ -53,7 +53,7 @@ export async function getPainDaysInfo(req, res, next) {
 
 export async function getSleepPointDaysInfo(req, res, next) {
     console.log('called getPainDaysInfo function');
-    let day = req.params.days;
+    let day = req.params.day;
     const result = await dataRepository.getSleepPointDaysInfo(day);
 
     res.status(200).json(result);
