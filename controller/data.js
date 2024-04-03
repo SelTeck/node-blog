@@ -121,7 +121,7 @@ export async function inputStimulusInfo(req, res, next) {
         return res.status(401).json({message: 'Failed enter this information.'});
     }
 
-    res.status(409).json({message: "OK"});
+    res.status(409).json({message: "Success enter Stimulus Information", number: Number(result.insertId)});
 }
 
 // GET records/data/stimulus/info
@@ -137,14 +137,14 @@ export async function getStimulusInfo(req, res, next) {
     res.status(200).json(result);   
 }
 
-// GET record/data/stimulus/detail:
+// GET record/data/stimulus/detail/:nowIndex (타입 별 설정 정보 가져오기)
 export async function getStimulusTypeDetail(req, res, next) {
     console.log('called getStimulusTypeDetail function');
 
     let nowIndex = req.params.nowIndex;
     let result = await dataRepository.getStimulusTypeDetail(nowIndex);
 
-    if (!result) {
+    if (result. length == 0) {
         return res.status(401).json({message: 'Failed search Stimulus information.'});
     }
 
