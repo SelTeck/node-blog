@@ -19,12 +19,12 @@ export async function signIn(req, res, next) {
 
     const result = await authRepository.findById(user);
 
-    if (!result) {
+    if (result == 0) {
         return res.status(401).json({message: 'Invalid user or password'});
     }
     
     let token = createJwtToken(user);
-    res.status(200).json({token});
+    res.status(200).json({userId:user, token});
 }
 
 export async function getStimulusInfo(req, res, next) {

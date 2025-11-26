@@ -7,7 +7,7 @@ export async function getAll(req, res) {
     res.status(200).json(data);
 }
 
-// Get records/:page/:viewCount
+// Get records/list/:page/:viewCount
 export async function getRssList(req, res) {
     console.log('called getRssList function');
     // let page = req.query.page;
@@ -16,7 +16,7 @@ export async function getRssList(req, res) {
     let viewCount = req.params.viewCount;
 
     const data = await dataRepository.getRssList(page, viewCount);
-    res.status(200).json(data);
+    res.status(200).json({data});
 }
 
 // Get records/detail/:rssIndex
@@ -144,7 +144,7 @@ export async function getStimulusTypeDetail(req, res, next) {
     let nowIndex = req.params.nowIndex;
     let result = await dataRepository.getStimulusTypeDetail(nowIndex);
 
-    if (result. length == 0) {
+    if (result.length == 0) {
         return res.status(401).json({message: 'Failed search Stimulus information.'});
     }
 
