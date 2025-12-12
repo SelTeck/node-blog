@@ -116,18 +116,30 @@ export class Crawling {
       
       let count = diary.lastIndexOf('통증 강도');
       let painInfo = diary.substring(count, diary.length - 2);
-      let pains = painInfo.match(/\d+/g);
-      let painMin = pains.length == 1 ? pains[0] : pains[0];
-      let painMax = pains.length == 1 ? pains[0] : pains[1];
-      
+      let pains = this.#extractPainLevels(painInfo)
+           
       make_data.insertCrawling(diary, weather, getUp, sleep_point,
-        painMin, painMax, reg_date.replaceAll('.', '-'), 
+        pains[0], pains[1], reg_date.replaceAll('.', '-'), 
       );
     } catch (err) {
       throw err;
     } 
   }
 
+  #extractPainLevels(text) {
+    // 모든 숫자를 추출
+    const numbers = text.match(/\d+/g);
+
+    if (!numbers) return [0, 0];
+
+    // "~ 4"처럼 앞 숫자가 없는 경우 → 앞 숫자를 뒤 숫자로 복제
+    if (numbers.length === 1) {
+        return [numbers[0], numbers[0]];
+    }
+
+    // "3 ~ 5"처럼 두 숫자가 있는 경우 그대로 반환
+    return numbers.slice(0, 2);
+}
 
   #changeDate(date) {
     // const monthNames = {
