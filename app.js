@@ -70,9 +70,9 @@ schedule.scheduleJob(rule, function() {
 /**
  * 1시간 마다 한 번씩 호출
  */ 
-setInterval(() => {
-   console.log(`Interval Time ${60 * 60 * 1000}sec`);
 
+
+doThenInterval(()=> {
     request(url, function (err, res, data) {
         if (!err && res.statusCode == 200) {
             crawling.parseXML(data);
@@ -80,8 +80,41 @@ setInterval(() => {
             console.log(`error -> ${err}`);
         }
     });
-}, INTERVAL_TIME * 60 * 60 * 1000);
+}, INTERVAL_TIME * 60 * 60 * 1000)
+// setInterval(() => {
+//    console.log(`Interval Time ${60 * 60 * 1000}sec`);
+
+//     request(url, function (err, res, data) {
+//         if (!err && res.statusCode == 200) {
+//             crawling.parseXML(data);
+//         } else {
+//             console.log(`error -> ${err}`);
+//         }
+//     });
+// }, INTERVAL_TIME * 60 * 60 * 1000);
 
 app.listen(PORT);
 
 
+function doThenInterval(fn, interval) {
+    // 첫 실행
+    fn();
+
+    // 이후 동일 interval 반복
+    setInterval(fn, interval);
+}
+
+function runWithInterval(fn, interval) {
+    // 즉시 첫 실행
+    fn();
+
+    // 그 다음부터 interval 이후 반복 실행
+    function loop() {
+        setTimeout(() => {
+            fn();
+            loop();
+        }, interval);
+    }
+
+    loop();
+}
