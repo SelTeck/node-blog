@@ -1,4 +1,5 @@
 import * as dataRepository from '../data/data.js';
+import * as stimulusRepostory from '../data/stimulus.js'
 
 
 export async function getAll(req, res) {
@@ -142,7 +143,7 @@ export async function getStimulusTypeDetail(req, res, next) {
     console.log('called getStimulusTypeDetail function');
 
     let nowIndex = req.params.nowIndex;
-    let result = await dataRepository.getStimulusTypeDetail(nowIndex);
+    let result = await stimulusRepostory.getStimulusTypeDetail(nowIndex);
 
     if (result.length == 0) {
         return res.status(401).json({message: 'Failed search Stimulus information.'});
