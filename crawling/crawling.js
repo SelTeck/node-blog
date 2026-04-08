@@ -1,6 +1,6 @@
 
 import axios from "axios";
-import cheerio from "cheerio";
+import * as cheerio from 'cheerio';
 import xml2Json from "xml2js";
 import * as make_data from "../data/make_data.js";
 
@@ -12,118 +12,90 @@ export class Crawling {
   }
 
   parseXML(xml) {
-    xml2Json.parseString(xml, function (err, obj) {
-      if (err) {
-        console.log(err);
-        return;
-      }
+    const parser = xml2Json.Parser({
+      explicitArray: false, // 배열 제거 (중요!)
+      ignoreAttrs: false
+    });
 
-      var items = obj.rss.channel[0].item;
+    parser.parseString(xml, (err, result) => {
+      if (err) throw err;
+      const channel = result.rss.channel;
+            
+      const items = channel.item;
       for (var item in items) {
-        let category = items[item].category[0];
-        let date = items[item].pubDate[0];
-
+        const category = items[item].category;
+        const pubDate = items[item].pubDate;
         if (category === this._word) {
-          let reg_date = this.#changeDate(date);
-          let title = items[item].title[0];
+          const reg_date = this.#changeDate(pubDate);
+          const title = items[item].title;
 
           if (title.startsWith(TitleWord)) {
-            // console.log(`title is ${title}, date is ${reg_date}`);
-            let start = title.indexOf("(")
-            let end = title.lastIndexOf(")")
+            const createAtTime = title.match(/\b\d{2}\.\d{2}\.\d{2}\b/)?.[0] ?? reg_date;
+            const subTitle = title.match(/\(([^)]*)\)/)?.[1] ?? "";
             
-            const regex = /\d{2}.\d{2}.\d{2}/g;
-            let times = title.match(regex);
-            let createAtTime = times == null ? null : times.toString();
-            // let createAtTime = title.substring(0, start).split(' - ')[1].replaceAll('.', '-');
-            
-            make_data.insertRss(title.substring(start + 1, end),
-              items[item].description[0],
-              items[item].link[0],
-              createAtTime == null ? reg_date : (reg_date != createAtTime ? createAtTime : reg_date)
-            );
-            this.#crawlingUrl(items[item].link[0]);
+            make_data.insertRss(subTitle, items[item].description, items[item].link, createAtTime);  
+            this.#crawlNaverBlog(items[item].link);
           }
         }
-
-        // var category = items[item].category[0];
-        // var url = items[item].link[0];
-        // var guid = items[item].guid[0];
-
-        // console.log("카테고리 : " + category);
-        // console.log("제목 : " + title);
-        // console.log("url: " + url);
       }
-    }.bind(this));
+    });
   }
 
-
-  async #getHtml(url) {
+  async #crawlNaverBlog(url) {
     try {
-      return await axios.get(url);
-    } catch (err) {
-      console.log(err);
-    }
-  }
-
-  async #crawlingUrl(url) {
-    const html = await this.#getHtml(url);
-    const $ = cheerio.load(html.data);
-
-    // id가 겹치지 않는 경우 가능함 (id => #, class => .)
-    // let src = $('#mainFrame').attr("src"); 
-    // 정확하게 하기 위해 root를 타는 것이 좋다.
-    let src = $("body > iframe#mainFrame").attr("src");
-    let real = "http://blog.naver.com/" + src;
-
-    // TODO. 여기에서 다시 html 파싱 필요 
-    this.#crawlingBlog(real);
-  }
-
-  async #crawlingBlog(url) {
-    const html = await this.#getHtml(url);
-    const $ = cheerio.load(html.data);
-
-    let div_list = $("div.se-module.se-module-text");
-    const getup_sub_count = 12;
+      const rssHtml = await axios.get(url);
+      const $ = cheerio.load(rssHtml.data);
+      // id가 겹치지 않는 경우 가능함 (id => #, class => .)
+      // let src = $('#mainFrame').attr("src"); 
+      // 정확하게 하기 위해 root를 타는 것이 좋다.
+      let iframeSrc = $("body > iframe#mainFrame").attr("src");
+      let blogUrl = "http://blog.naver.com/" + iframeSrc;
+      
+      // Blog Crawling
+      const blogHtml = await axios.get(blogUrl);
+      const $$ = cheerio.load(blogHtml.data);
+      const div_list = $$("div.se-module.se-module-text");
+      
+      // console.log($$(div_list[0]).find(`span`).map((i, el) => {return $$(el).text();}).get().join('\n')  // title
+      // console.log($$(div_list[1]).find(`span`).map((i, el) => {return $$(el).text();}).get().join('\n')  // weather
+      // console.log($$(div_list[2]).find(`span`).map((i, el) => {return $$(el).text();}).get().join('\n')  // 기상 후 몸 체크
+      // console.log($$(div_list[3]).find(`span`).map((i, el) => {return $$(el).text();}).get().join('\n')  // 수면 포인트
+      // console.log($$(div_list[4]).find(`span`).map((i, el) => {return $$(el).text();}).get().join('\n')  // 기상 후 몸 체크 내용
+      // console.log($$(div_list[5]).find(`span`).map((i, el) => {return $$(el).text();}).get().join('\n')  // CRPS 통증 기록 
     
-    /*
-        console.log('1' + $(div_list[0]).find(`span`).text());  // title
-        console.log('2' + $(div_list[1]).find(`span`).text());  // weather
-        console.log('3' + $(div_list[2]).find(`span`).text());  // 기상 후 몸 체크
-        console.log('4' + $(div_list[3]).find(`span`).text());  // 수면 포인트
-        console.log('5' + $(div_list[4]).find(`span`).text());  // 기상 후 몸 체크 내용
-        console.log('6' + $(div_list[5]).find(`span`).text());  // CRPS 통증 기록 
-    // */
-    console.log(div_list.length);
-    try {
-      let title = $(div_list[0]).find(`span`).text();
-      let titles = title.split(" - ");
 
-      let reg_date = titles[1].substring(0, titles[1].lastIndexOf('('));
-      let weather = $(div_list[1]).find(`span`).text().replace('날씨:', '');
+      const title = $$(div_list[0]).find(`span`).map((i, el) => {
+        return $$(el).text();
+      }).get().join('\n');
+      // const title = titleElement.match(/\(([^)]*)\)/)?.[1] ?? "";
+      const weather = $$(div_list[1]).find(`span`).map((i, el) => {
+        return $$(el).text();
+      }).get().join('\n').replace('날씨:', '');
 
-      // 수면 후 정보 가져오기 
-      let getUp = $(div_list[2]).find(`span`).text().substring(getup_sub_count);
-      // 수면 점수 가져오기     
-      let sleep_point = $(div_list[3]).find(`span`).text().replace(/[^0-9]/g, '');
+      const wakeup = $$(div_list[2]).find(`span`).map((i, el) => {
+        return $$(el).text();
+      }).get().join('\n');
       
-      // 통증 강도 가져오기 
-      // let diaryText = $(div_list[5]).find(`span`).text();
-      // let diaryIndex = diaryText.replace('【오늘의 기록】', '')
+      const sleep_point = $$(div_list[3]).find(`span`).text().replace(/[^0-9]/g, '');
       
-      let diary = $(div_list[5]).find(`span`).text().replace('【오늘의 기록】', '');
-      
-      let count = diary.lastIndexOf('통증 강도');
-      let painInfo = diary.substring(count, diary.length - 2);
-      let pains = this.#extractPainLevels(painInfo)
-           
-      make_data.insertCrawling(diary, weather, getUp, sleep_point,
-        pains[0], pains[1], reg_date.replaceAll('.', '-'), 
-      );
-    } catch (err) {
-      throw err;
-    } 
+      const diary = $$(div_list[5]).find(`span`).map((i, el) => {
+        return $$(el).text();
+      }).get().join('\n');
+
+      const reg_date = title.match(/\d{2}\.\d{2}\.\d{2}/);
+      const painInfo = diary.match(/통증\s*강도:\s*~?\s*([0-9]+)/);
+
+      if (painInfo) {
+          const painLevel = painInfo[1].replace(/\s+/g, '');
+          const pains = this.#extractPainLevels(painLevel)
+          
+          make_data.insertCrawling(diary, weather, wakeup, sleep_point,
+            pains[0], pains[1], reg_date);
+      }
+
+    } catch(err) {
+      console.log("crawlNaverBlog err " + err.toString());
+    }
   }
 
   #extractPainLevels(text) {
@@ -139,7 +111,20 @@ export class Crawling {
 
     // "3 ~ 5"처럼 두 숫자가 있는 경우 그대로 반환
     return numbers.slice(0, 2);
-}
+  }
+
+  #getPainLevels(text) {
+    const match = text.match(/통증\s*강도:\s*~?\s*([0-9]+)\s*(?:~\s*([0-9]+))?/);
+
+    if (!match) {
+        return null;
+    }
+
+    const first = parseInt(match[1], 10);
+    const second = match[2] ? parseInt(match[2], 10) : first;
+
+    return [first, second];
+  }
 
   #changeDate(date) {
     // const monthNames = {
