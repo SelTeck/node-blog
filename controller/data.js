@@ -1,5 +1,5 @@
 import * as dataRepository from '../data/data.js';
-import * as stimulusRepostory from '../data/stimulus.js'
+import * as stimulusRepository from '../data/stimulus.js'
 
 
 export async function getAll(req, res) {
@@ -16,7 +16,7 @@ export async function getRssList(req, res) {
     let page = req.params.page;
     let viewCount = req.params.viewCount;
 
-    const data = await dataRepository.getRssList(page, viewCount);
+    const data = await stimulusRepository.getRssList(page, viewCount);
     res.status(200).json({data});
 }
 
@@ -26,7 +26,7 @@ export async function getContent(req, res, next) {
 
     let rss_index = req.params.rss_index;
     
-    const result = await dataRepository.getContent(rss_index);
+    const result = await stimulusRepository.getContent(rss_index);
 
     if (result.length != 0) {
         res.status(200).json(result[0]);
