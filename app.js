@@ -44,34 +44,10 @@ app.use((error, req, res, next) => {
     res.sendStatus(500);
 });
 
-/*
-request(url, function (err, res, data) {
-    if (!err && res.statusCode == 200) {
-        crawling.parseXML(data);
-    } else {
-        console.log(`error -> ${err}`);
-    }
-});
-// */
-
-/*
-schedule.scheduleJob(rule, function() {
-    console.log(`called request, rule is ${rule}`);
-    request(url, function (err, res, data) {
-        if (!err && res.statusCode == 200) {
-            crawling.parseXML(data);
-        } else {
-            console.log(`error -> ${err}`);
-        }
-    });
-}); 
-// */
 
 /**
  * 1시간 마다 한 번씩 호출
  */ 
-
-
 doThenInterval(()=> {
     request(url, function (err, res, data) {
         if (!err && res.statusCode == 200) {
@@ -81,17 +57,6 @@ doThenInterval(()=> {
         }
     });
 }, INTERVAL_TIME * 60 * 60 * 1000)
-// setInterval(() => {
-//    console.log(`Interval Time ${60 * 60 * 1000}sec`);
-
-//     request(url, function (err, res, data) {
-//         if (!err && res.statusCode == 200) {
-//             crawling.parseXML(data);
-//         } else {
-//             console.log(`error -> ${err}`);
-//         }
-//     });
-// }, INTERVAL_TIME * 60 * 60 * 1000);
 
 app.listen(PORT);
 
